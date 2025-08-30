@@ -7,9 +7,6 @@
 [submodule "tools/XenosRecomp"]
 	path = tools/XenosRecomp
 	url = https://github.com/hedge-dev/XenosRecomp.git
-[submodule "UnleashedRecompResources"]
-	path = UnleashedRecompResources
-	url = https://github.com/hedge-dev/UnleashedRecompResources.git
 [submodule "thirdparty/msdf-atlas-gen"]
 	path = thirdparty/msdf-atlas-gen
 	url = https://github.com/Chlumsky/msdf-atlas-gen.git
@@ -58,6 +55,3 @@
 [submodule "thirdparty/json"]
 	path = thirdparty/json
 	url = https://github.com/nlohmann/json
-[submodule "UnleashedRecomp/api"]
-	path = UnleashedRecomp/api
-	url = https://github.com/hedge-dev/SWA.git
