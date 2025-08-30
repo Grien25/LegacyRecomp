@@ -1,0 +1,80 @@
+[main]
+file_path = "../private/tu2.xex"
+#patch_file_path = "../private/default.xexp"
+#patched_file_path = "../private/default_patched.xex"
+out_directory_path = "../ppc"
+switch_table_file_path = "LCE_TU2_switch_tables.toml"
+
+skip_lr = false
+skip_msr = false
+ctr_as_local = false
+xer_as_local = false
+reserved_as_local = false
+cr_as_local = false
+non_argument_as_local = false
+non_volatile_as_local = false
+
+
+restgprlr_14_address = 0x82696f50
+savegprlr_14_address = 0x82696f00
+restfpr_14_address = 0x82697e8c
+savefpr_14_address = 0x82697e40
+restvmx_14_address = 0x8269a708
+savevmx_14_address = 0x8269a470
+restvmx_64_address = 0x8269a79c
+savevmx_64_address = 0x8269a504
+
+
+
+functions = [
+    { address = 0x821D1678, size = 0x8D0 },
+	{ address = 0x821DB830, size = 0x1F40 },
+	{ address = 0x82224100, size = 0x3f0 },
+	{ address = 0x82284450, size = 0x220c },
+	{ address = 0x822994a8, size = 0xd68 },
+	{ address = 0x8229b2e0, size = 0x7a4 },
+	{ address = 0x8231d2e0, size = 0x948 },
+	{ address = 0x8231dc28, size = 0x548 },
+	{ address = 0x82330828, size = 0x220 },
+	{ address = 0x823dacb8, size = 0x184 },
+	{ address = 0x824c2920, size = 0x3c0 },
+	{ address = 0x8258b348, size = 0x110 },
+	{ address = 0x8258bed0, size = 0x35c },
+	{ address = 0x8258fe90, size = 0x550 },
+	{ address = 0x826747a8, size = 0x90 },
+	{ address = 0x82674878, size = 0xb0 },
+	{ address = 0x826749c0, size = 0x88 },
+	{ address = 0x82674a50, size = 0xf8 },
+	{ address = 0x82674b50, size = 0xb0 },
+	{ address = 0x82674c08, size = 0x178 },
+	{ address = 0x82674d88, size = 0xa0 },
+	{ address = 0x82674e68, size = 0x418 },
+	{ address = 0x826e0a08, size = 0x220 },
+	{ address = 0x826e33d0, size = 0x6a0 },
+	{ address = 0x82736708, size = 0x1c8 },
+	{ address = 0x827805c8, size = 0x110 },
+	{ address = 0x828014d0, size = 0x88 },
+	{ address = 0x828078f0, size = 0xb8 },
+	{ address = 0x828079b0, size = 0xa0 },
+	{ address = 0x82908130, size = 0xb8 },
+	{ address = 0x829081f0, size = 0xb4 },
+	{ address = 0x829082a8, size = 0x7c },
+	{ address = 0x82908328, size = 0x78 },
+	{ address = 0x829083d0, size = 0x64 },
+	{ address = 0x82908438, size = 0x60 },
+	{ address = 0x82908598, size = 0x17c },
+	{ address = 0x82908718, size = 0x58 },
+	{ address = 0x829087a8, size = 0x194 },
+	{ address = 0x82908940, size = 0x168 },
+	{ address = 0x82908b18, size = 0x104 },
+	{ address = 0x8290ad40, size = 0xE0 },
+	{ address = 0x82931078, size = 0x18C },
+	{ address = 0x82946778, size = 0x234 },
+	{ address = 0x8294a008, size = 0x26C },
+	{ address = 0x8294fca8, size = 0xB0 },
+]
+	
+
+invalid_instructions = [
+    { data = 0x00000000, size = 4 }, # Padding
+]

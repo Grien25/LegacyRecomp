@@ -26,8 +26,8 @@ add_compile_options(
 add_subdirectory(${UNLEASHED_RECOMP_THIRDPARTY_ROOT})
 add_subdirectory(${UNLEASHED_RECOMP_TOOLS_ROOT})
 
-project("UnleashedRecomp-ALL")
+project("LegacyRecomp-ALL")
 
-# Include sub-projects.
-add_subdirectory("UnleashedRecompLib")
-add_subdirectory("UnleashedRecomp")
+# Include sub-projects. 
+add_subdirectory("LegacyRecompLib")
+add_subdirectory("LegacyRecomp")
