@@ -80,4 +80,5 @@ add_library(LegacyRecompLib
 )
  
 target_include_directories(LegacyRecompLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(LegacyRecompLib PRIVATE "${UNLEASHED_RECOMP_TOOLS_ROOT}/XenonRecomp/thirdparty/simde")
 target_precompile_headers(LegacyRecompLib PUBLIC "ppc/ppc_recomp_shared.h")
