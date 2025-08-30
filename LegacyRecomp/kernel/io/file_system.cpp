@@ -3,9 +3,9 @@
 #include <kernel/xam.h>
 #include <kernel/xdm.h>
 #include <kernel/function.h>
-#include <mod/mod_loader.h>
+//#include <mod/mod_loader.h>
 #include <os/logger.h>
-#include <user/config.h>
+#include <config.h>
 #include <stdafx.h>
 
 struct FileHandle : KernelObject
@@ -47,15 +47,15 @@ struct FindHandle : KernelObject
             std::string pathStr(pathNoPrefix);
             std::replace(pathStr.begin(), pathStr.end(), '\\', '/');
 
-            for (size_t i = 0; ; i++)
-            {
-                auto* includeDirs = ModLoader::GetIncludeDirectories(i);
-                if (includeDirs == nullptr)
-                    break;
-
-                for (auto& includeDir : *includeDirs)
-                    addDirectory(includeDir / pathStr);
-            }
+            //for (size_t i = 0; ; i++)
+            //{
+            //    auto* includeDirs = ModLoader::GetIncludeDirectories(i);
+            //    if (includeDirs == nullptr)
+            //        break;
+            //
+            //    for (auto& includeDir : *includeDirs)
+            //        addDirectory(includeDir / pathStr);
+            //}
         }
 
         addDirectory(FileSystem::ResolvePath(path, false));
@@ -365,15 +365,15 @@ std::filesystem::path FileSystem::ResolvePath(const std::string_view& path, bool
 {
     if (checkForMods)
     {
-        std::filesystem::path resolvedPath = ModLoader::ResolvePath(path);
-
-        if (!resolvedPath.empty())
-        {
-            if (ModLoader::s_isLogTypeConsole)
-                LOGF_IMPL(Utility, "Mod Loader", "Loading file: \"{}\"", reinterpret_cast<const char*>(resolvedPath.u8string().c_str()));
-
-            return resolvedPath;
-        }
+        //std::filesystem::path resolvedPath = ModLoader::ResolvePath(path);
+        //
+        //if (!resolvedPath.empty())
+        //{
+        //    if (ModLoader::s_isLogTypeConsole)
+        //        LOGF_IMPL(Utility, "Mod Loader", "Loading file: \"{}\"", reinterpret_cast<const char*>(resolvedPath.u8string().c_str()));
+        //
+        //    return resolvedPath;
+        //}
     }
 
     thread_local std::string builtPath;

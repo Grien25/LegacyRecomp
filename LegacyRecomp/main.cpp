@@ -11,19 +11,13 @@
 #include <xex.h>
 #include <apu/audio.h>
 #include <hid/hid.h>
-#include <user/config.h>
-#include <user/paths.h>
-#include <user/persistent_storage_manager.h>
-#include <user/registry.h>
+#include <config.h>
 #include <kernel/xdbf.h>
-#include <install/installer.h>
-#include <install/update_checker.h>
 #include <os/logger.h>
 #include <os/process.h>
 #include <os/registry.h>
 #include <ui/game_window.h>
-#include <ui/installer_wizard.h>
-#include <mod/mod_loader.h>
+//#include <mod/mod_loader.h>
 #include <preload_executable.h>
 
 #ifdef _WIN32
@@ -61,7 +55,7 @@ void KiSystemStartup()
 {
     if (g_memory.base == nullptr)
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), Localise("System_MemoryAllocationFailed").c_str(), GameWindow::s_pWindow);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), "System_MemoryAllocationFailed", GameWindow::s_pWindow);
         std::_Exit(1);
     }
 
@@ -69,30 +63,30 @@ void KiSystemStartup()
 
     const auto gameContent = XamMakeContent(XCONTENTTYPE_RESERVED, "Game");
     const auto updateContent = XamMakeContent(XCONTENTTYPE_RESERVED, "Update");
-    XamRegisterContent(gameContent, GAME_INSTALL_DIRECTORY "/game");
-    XamRegisterContent(updateContent, GAME_INSTALL_DIRECTORY "/update");
+    //XamRegisterContent(gameContent, GAME_INSTALL_DIRECTORY "/game");
+    //XamRegisterContent(updateContent, GAME_INSTALL_DIRECTORY "/update");
+    //
+    //const auto saveFilePath = GetSaveFilePath(true);
+    //bool saveFileExists = std::filesystem::exists(saveFilePath);
 
-    const auto saveFilePath = GetSaveFilePath(true);
-    bool saveFileExists = std::filesystem::exists(saveFilePath);
-
-    if (!saveFileExists)
-    {
-        // Copy base save data to modded save as fallback.
-        std::error_code ec;
-        std::filesystem::create_directories(saveFilePath.parent_path(), ec);
-
-        if (!ec)
-        {
-            std::filesystem::copy_file(GetSaveFilePath(false), saveFilePath, ec);
-            saveFileExists = !ec;
-        }
-    }
-
-    if (saveFileExists)
-    {
-        std::u8string savePathU8 = saveFilePath.parent_path().u8string();
-        XamRegisterContent(XamMakeContent(XCONTENTTYPE_SAVEDATA, "SYS-DATA"), (const char*)(savePathU8.c_str()));
-    }
+    //if (!saveFileExists)
+    //{
+    //    // Copy base save data to modded save as fallback.
+    //    std::error_code ec;
+    //    std::filesystem::create_directories(saveFilePath.parent_path(), ec);
+    //
+    //    if (!ec)
+    //    {
+    //        std::filesystem::copy_file(GetSaveFilePath(false), saveFilePath, ec);
+    //        saveFileExists = !ec;
+    //    }
+    //}
+    //
+    //if (saveFileExists)
+    //{
+    //    std::u8string savePathU8 = saveFilePath.parent_path().u8string();
+    //    XamRegisterContent(XamMakeContent(XCONTENTTYPE_SAVEDATA, "SYS-DATA"), (const char*)(savePathU8.c_str()));
+    //}
 
     // Mount game
     XamContentCreateEx(0, "game", &gameContent, OPEN_EXISTING, nullptr, nullptr, 0, 0, nullptr);
@@ -102,15 +96,15 @@ void KiSystemStartup()
     XamContentCreateEx(0, "D", &gameContent, OPEN_EXISTING, nullptr, nullptr, 0, 0, nullptr);
 
     std::error_code ec;
-    for (auto& file : std::filesystem::directory_iterator(GAME_INSTALL_DIRECTORY "/dlc", ec))
-    {
-        if (file.is_directory())
-        {
-            std::u8string fileNameU8 = file.path().filename().u8string();
-            std::u8string filePathU8 = file.path().u8string();
-            XamRegisterContent(XamMakeContent(XCONTENTTYPE_DLC, (const char*)(fileNameU8.c_str())), (const char*)(filePathU8.c_str()));
-        }
-    }
+    //for (auto& file : std::filesystem::directory_iterator(GAME_INSTALL_DIRECTORY "/dlc", ec))
+    //{
+    //    if (file.is_directory())
+    //    {
+    //        std::u8string fileNameU8 = file.path().filename().u8string();
+    //        std::u8string filePathU8 = file.path().u8string();
+    //        XamRegisterContent(XamMakeContent(XCONTENTTYPE_DLC, (const char*)(fileNameU8.c_str())), (const char*)(filePathU8.c_str()));
+    //    }
+    //}
 
     XAudioInitializeSystem();
 }
@@ -165,7 +159,7 @@ uint32_t LdrLoadModule(const std::filesystem::path &path)
     return entry;
 }
 
-__attribute__((constructor(101), target("no-avx,no-avx2"), noinline))
+//__attribute__((constructor(101), target("no-avx,no-avx2"), noinline))
 void init()
 {
 #ifdef __x86_64__
@@ -237,123 +231,125 @@ int main(int argc, char *argv[])
 
     Config::Load();
 
-    if (forceInstallationCheck)
-    {
-        // Create the console to show progress to the user, otherwise it will seem as if the game didn't boot at all.
-        os::process::ShowConsole();
-
-        Journal journal;
-        double lastProgressMiB = 0.0;
-        double lastTotalMib = 0.0;
-        Installer::checkInstallIntegrity(GAME_INSTALL_DIRECTORY, journal, [&]()
-        {
-            constexpr double MiBDivisor = 1024.0 * 1024.0;
-            constexpr double MiBProgressThreshold = 128.0;
-            double progressMiB = double(journal.progressCounter) / MiBDivisor;
-            double totalMiB = double(journal.progressTotal) / MiBDivisor;
-            if (journal.progressCounter > 0)
-            {
-                if ((progressMiB - lastProgressMiB) > MiBProgressThreshold)
-                {
-                    fprintf(stdout, "Checking files: %0.2f MiB / %0.2f MiB\n", progressMiB, totalMiB);
-                    lastProgressMiB = progressMiB;
-                }
-            }
-            else
-            {
-                if ((totalMiB - lastTotalMib) > MiBProgressThreshold)
-                {
-                    fprintf(stdout, "Scanning files: %0.2f MiB\n", totalMiB);
-                    lastTotalMib = totalMiB;
-                }
-            }
-
-            return true;
-        });
-
-        char resultText[512];
-        uint32_t messageBoxStyle;
-        if (journal.lastResult == Journal::Result::Success)
-        {
-            snprintf(resultText, sizeof(resultText), "%s", Localise("IntegrityCheck_Success").c_str());
-            fprintf(stdout, "%s\n", resultText);
-            messageBoxStyle = SDL_MESSAGEBOX_INFORMATION;
-        }
-        else
-        {
-            snprintf(resultText, sizeof(resultText), Localise("IntegrityCheck_Failed").c_str(), journal.lastErrorMessage.c_str());
-            fprintf(stderr, "%s\n", resultText);
-            messageBoxStyle = SDL_MESSAGEBOX_ERROR;
-        }
-
-        SDL_ShowSimpleMessageBox(messageBoxStyle, GameWindow::GetTitle(), resultText, GameWindow::s_pWindow);
-        std::_Exit(int(journal.lastResult));
-    }
+    //if (forceInstallationCheck)
+    //{
+    //    // Create the console to show progress to the user, otherwise it will seem as if the game didn't boot at all.
+    //    os::process::ShowConsole();
+    //
+    //    Journal journal;
+    //    double lastProgressMiB = 0.0;
+    //    double lastTotalMib = 0.0;
+    //    Installer::checkInstallIntegrity(GAME_INSTALL_DIRECTORY, journal, [&]()
+    //    {
+    //        constexpr double MiBDivisor = 1024.0 * 1024.0;
+    //        constexpr double MiBProgressThreshold = 128.0;
+    //        double progressMiB = double(journal.progressCounter) / MiBDivisor;
+    //        double totalMiB = double(journal.progressTotal) / MiBDivisor;
+    //        if (journal.progressCounter > 0)
+    //        {
+    //            if ((progressMiB - lastProgressMiB) > MiBProgressThreshold)
+    //            {
+    //                fprintf(stdout, "Checking files: %0.2f MiB / %0.2f MiB\n", progressMiB, totalMiB);
+    //                lastProgressMiB = progressMiB;
+    //            }
+    //        }
+    //        else
+    //        {
+    //            if ((totalMiB - lastTotalMib) > MiBProgressThreshold)
+    //            {
+    //                fprintf(stdout, "Scanning files: %0.2f MiB\n", totalMiB);
+    //                lastTotalMib = totalMiB;
+    //            }
+    //        }
+    //
+    //        return true;
+    //    });
+    //
+    //    char resultText[512];
+    //    uint32_t messageBoxStyle;
+    //    if (journal.lastResult == Journal::Result::Success)
+    //    {
+    //        snprintf(resultText, sizeof(resultText), "%s", Localise("IntegrityCheck_Success").c_str());
+    //        fprintf(stdout, "%s\n", resultText);
+    //        messageBoxStyle = SDL_MESSAGEBOX_INFORMATION;
+    //    }
+    //    else
+    //    {
+    //        snprintf(resultText, sizeof(resultText), Localise("IntegrityCheck_Failed").c_str(), journal.lastErrorMessage.c_str());
+    //        fprintf(stderr, "%s\n", resultText);
+    //        messageBoxStyle = SDL_MESSAGEBOX_ERROR;
+    //    }
+    //
+    //    SDL_ShowSimpleMessageBox(messageBoxStyle, GameWindow::GetTitle(), resultText, GameWindow::s_pWindow);
+    //    std::_Exit(int(journal.lastResult));
+    //}
 
 #if defined(_WIN32) && defined(UNLEASHED_RECOMP_D3D12)
     for (auto& dll : g_D3D12RequiredModules)
     {
-        if (!std::filesystem::exists(g_executableRoot / dll))
-        {
-            char text[512];
-            snprintf(text, sizeof(text), Localise("System_Win32_MissingDLLs").c_str(), dll.data());
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), text, GameWindow::s_pWindow);
-            std::_Exit(1);
-        }
+        //if (!std::filesystem::exists(g_executableRoot / dll))
+        //{
+        //    char text[512];
+        //    snprintf(text, sizeof(text), Localise("System_Win32_MissingDLLs").c_str(), dll.data());
+        //    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), text, GameWindow::s_pWindow);
+        //    std::_Exit(1);
+        //}
     }
 #endif
 
     // Check the time since the last time an update was checked. Store the new time if the difference is more than six hours.
-    constexpr double TimeBetweenUpdateChecksInSeconds = 6 * 60 * 60;
-    time_t timeNow = std::time(nullptr);
-    double timeDifferenceSeconds = difftime(timeNow, Config::LastChecked);
-    if (timeDifferenceSeconds > TimeBetweenUpdateChecksInSeconds)
-    {
-        UpdateChecker::initialize();
-        UpdateChecker::start();
-        Config::LastChecked = timeNow;
-        Config::Save();
-    }
-
-    if (Config::ShowConsole)
-        os::process::ShowConsole();
+    //constexpr double TimeBetweenUpdateChecksInSeconds = 6 * 60 * 60;
+    //time_t timeNow = std::time(nullptr);
+    //double timeDifferenceSeconds = difftime(timeNow, Config::LastChecked);
+    //if (timeDifferenceSeconds > TimeBetweenUpdateChecksInSeconds)
+    //{
+    //    UpdateChecker::initialize();
+    //    UpdateChecker::start();
+    //    Config::LastChecked = timeNow;
+    //    Config::Save();
+    //}
+    //
+    //if (Config::ShowConsole)
+    //    os::process::ShowConsole();
 
     HostStartup();
 
-    std::filesystem::path modulePath;
-    bool isGameInstalled = Installer::checkGameInstall(GAME_INSTALL_DIRECTORY, modulePath);
-    bool runInstallerWizard = forceInstaller || forceDLCInstaller || !isGameInstalled;
-    if (runInstallerWizard)
-    {
-        if (!Video::CreateHostDevice(sdlVideoDriver, graphicsApiRetry))
-        {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), Localise("Video_BackendError").c_str(), GameWindow::s_pWindow);
-            std::_Exit(1);
-        }
+    // TEMP, we would want to load it dinamicaly, idk a config or something
+    std::filesystem::path modulePath = "F:/priv/LCE_RECOMP/private/tu2.xex";
+    
+    
+    //bool isGameInstalled = Installer::checkGameInstall(GAME_INSTALL_DIRECTORY, modulePath);
+    //bool runInstallerWizard = forceInstaller || forceDLCInstaller || !isGameInstalled;
+    //if (runInstallerWizard)
+    //{
+    //    if (!Video::CreateHostDevice(sdlVideoDriver, graphicsApiRetry))
+    //    {
+    //        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), "Video_BackendError", GameWindow::s_pWindow);
+    //        std::_Exit(1);
+    //    }
+    //
+    //    //if (!InstallerWizard::Run(GAME_INSTALL_DIRECTORY, isGameInstalled && forceDLCInstaller))
+    //    //{
+    //    //    std::_Exit(0);
+    //    //}
+    //}
 
-        if (!InstallerWizard::Run(GAME_INSTALL_DIRECTORY, isGameInstalled && forceDLCInstaller))
-        {
-            std::_Exit(0);
-        }
+    if (!Video::CreateHostDevice(sdlVideoDriver, graphicsApiRetry))
+    {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), "Video_BackendError", GameWindow::s_pWindow);
+        std::_Exit(1);
     }
 
-    ModLoader::Init();
+    
 
-    if (!PersistentStorageManager::LoadBinary())
-        LOGFN_ERROR("Failed to load persistent storage binary... (status code {})", (int)PersistentStorageManager::BinStatus);
+    //if (!PersistentStorageManager::LoadBinary())
+    //    LOGFN_ERROR("Failed to load persistent storage binary... (status code {})", (int)PersistentStorageManager::BinStatus);
 
     KiSystemStartup();
 
     uint32_t entry = LdrLoadModule(modulePath);
 
-    if (!runInstallerWizard)
-    {
-        if (!Video::CreateHostDevice(sdlVideoDriver, graphicsApiRetry))
-        {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), Localise("Video_BackendError").c_str(), GameWindow::s_pWindow);
-            std::_Exit(1);
-        }
-    }
+   
 
     Video::StartPipelinePrecompilation();
 
@@ -362,11 +358,11 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-GUEST_FUNCTION_STUB(__imp__vsprintf);
-GUEST_FUNCTION_STUB(__imp___vsnprintf);
-GUEST_FUNCTION_STUB(__imp__sprintf);
-GUEST_FUNCTION_STUB(__imp___snprintf);
-GUEST_FUNCTION_STUB(__imp___snwprintf);
-GUEST_FUNCTION_STUB(__imp__vswprintf);
-GUEST_FUNCTION_STUB(__imp___vscwprintf);
-GUEST_FUNCTION_STUB(__imp__swprintf);
+GUEST_FUNCTION_STUB_P(__imp__vsprintf);
+GUEST_FUNCTION_STUB_P(__imp___vsnprintf);
+GUEST_FUNCTION_STUB_P(__imp__sprintf);
+GUEST_FUNCTION_STUB_P(__imp___snprintf);
+GUEST_FUNCTION_STUB_P(__imp___snwprintf);
+GUEST_FUNCTION_STUB_P(__imp__vswprintf);
+GUEST_FUNCTION_STUB_P(__imp___vscwprintf);
+GUEST_FUNCTION_STUB_P(__imp__swprintf);

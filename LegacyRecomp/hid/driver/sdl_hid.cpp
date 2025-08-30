@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include <SDL.h>
-#include <user/config.h>
+#include <config.h>
 #include <hid/hid.h>
 #include <os/logger.h>
 #include <ui/game_window.h>

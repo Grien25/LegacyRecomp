@@ -10,7 +10,7 @@
 #include <memory>
 #include "xam.h"
 #include "xdm.h"
-#include <user/config.h>
+//#include <user/config.h>
 #include <os/logger.h>
 
 #ifdef _WIN32
@@ -223,8 +223,8 @@ void XGetVideoMode()
 
 uint32_t XGetGameRegion()
 {
-    if (Config::Language == ELanguage::Japanese)
-        return 0x0101;
+    //if (Config::Language == ELanguage::Japanese)
+    //    return 0x0101;
 
     return 0x03FF;
 }
@@ -322,7 +322,7 @@ void XamShowMessageBoxUIEx()
 
 uint32_t XGetLanguage()
 {
-    return (uint32_t)Config::Language.Value;
+    return (uint32_t)0x55443322;
 }
 
 uint32_t XGetAVPack()
@@ -465,7 +465,7 @@ uint32_t ExGetXConfigSetting(uint16_t Category, uint16_t Setting, void* Buffer, 
 
                 // XCONFIG_USER_LANGUAGE
                 case 0x0009:
-                    data[0] = ByteSwap((uint32_t)Config::Language.Value);
+                    data[0] = ByteSwap((uint32_t)0x22334455);
                     break;
 
                 // XCONFIG_USER_VIDEO_FLAGS
@@ -1808,3 +1808,233 @@ GUEST_FUNCTION_HOOK(__imp__XMACreateContext, XMACreateContext);
 GUEST_FUNCTION_HOOK(__imp__XAudioRegisterRenderDriverClient, XAudioRegisterRenderDriverClient);
 GUEST_FUNCTION_HOOK(__imp__XAudioUnregisterRenderDriverClient, XAudioUnregisterRenderDriverClient);
 GUEST_FUNCTION_HOOK(__imp__XAudioSubmitRenderDriverFrame, XAudioSubmitRenderDriverFrame);
+
+
+GUEST_FUNCTION_STUB_P(__imp__XamLoaderGetLaunchData);
+GUEST_FUNCTION_STUB_P(__imp__XamLoaderGetLaunchDataSize);
+GUEST_FUNCTION_STUB_P(__imp__XamLoaderSetLaunchData);
+GUEST_FUNCTION_STUB_P(__imp__XamReadTileToTexture);
+GUEST_FUNCTION_STUB_P(__imp__XamUserAreUsersFriends);
+GUEST_FUNCTION_STUB_P(__imp__XamUserCheckPrivilege);
+GUEST_FUNCTION_STUB_P(__imp__XamUserCreateStatsEnumerator);
+GUEST_FUNCTION_STUB_P(__imp__XamUserGetName);
+GUEST_FUNCTION_STUB_P(__imp__XamParseGamerTileKey);
+GUEST_FUNCTION_STUB_P(__imp__XamReadString);
+GUEST_FUNCTION_STUB_P(__imp__XamShowCustomMessageComposeUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowCustomPlayerListUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowMarketplaceDownloadItemsUI);
+GUEST_FUNCTION_STUB_P(__imp__XamUserCreateAchievementEnumerator);
+GUEST_FUNCTION_STUB_P(__imp__XamUserGetXUID);
+GUEST_FUNCTION_STUB_P(__imp__XamWriteGamerTile);
+GUEST_FUNCTION_STUB_P(__imp__XamGetCurrentTitleId);
+GUEST_FUNCTION_STUB_P(__imp__XamInputGetKeystrokeEx);
+GUEST_FUNCTION_STUB_P(__imp__XamShowFriendsUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowGameVoiceChannelUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowGoldUpgradeUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowSigninUIp);
+GUEST_FUNCTION_STUB_P(__imp__XamShowWordRegisterUI);
+GUEST_FUNCTION_STUB_P(__imp__XMsgCancelIORequest);
+GUEST_FUNCTION_STUB_P(__imp__XamShowVoiceMailUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowAchievementsUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowGamerCardUIForXUID);
+GUEST_FUNCTION_STUB_P(__imp__XamShowKeyboardUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowMessagesUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowPlayerReviewUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowPlayersUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowQuickChatUI);
+GUEST_FUNCTION_STUB_P(__imp__XamContentFlush);
+GUEST_FUNCTION_STUB_P(__imp__XamContentInstall);
+GUEST_FUNCTION_STUB_P(__imp__XamNuiGetDeviceStatus);
+GUEST_FUNCTION_STUB_P(__imp__XamShowFriendRequestUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowGameInviteUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowMarketplaceUI);
+GUEST_FUNCTION_STUB_P(__imp__XamShowMessageComposeUI);
+GUEST_FUNCTION_STUB_P(__imp__XMsgSystemProcessCall);
+GUEST_FUNCTION_STUB_P(__imp__ObOpenObjectByPointer);
+GUEST_FUNCTION_STUB_P(__imp__XamContentCreateDeviceEnumerator);
+GUEST_FUNCTION_STUB_P(__imp__XamContentGetDeviceName);
+GUEST_FUNCTION_STUB_P(__imp__XamContentGetLicenseMask);
+GUEST_FUNCTION_STUB_P(__imp__XamContentGetThumbnail);
+GUEST_FUNCTION_STUB_P(__imp__XamContentLaunchImage);
+GUEST_FUNCTION_STUB_P(__imp__XamContentResolve);
+GUEST_FUNCTION_STUB_P(__imp__XamContentSetThumbnail);
+GUEST_FUNCTION_STUB_P(__imp__KeSetDisableBoostThread);
+GUEST_FUNCTION_STUB_P(__imp__MmSetAddressProtect);
+GUEST_FUNCTION_STUB_P(__imp__NtPulseEvent);
+GUEST_FUNCTION_STUB_P(__imp__NtQueueApcThread);
+GUEST_FUNCTION_STUB_P(__imp__NtSignalAndWaitForSingleObjectEx);
+GUEST_FUNCTION_STUB_P(__imp__ObLookupThreadByThreadId);
+GUEST_FUNCTION_STUB_P(__imp__ObOpenObjectByName);
+GUEST_FUNCTION_STUB_P(__imp__XexUnloadImage);
+GUEST_FUNCTION_STUB_P(__imp__KeInitializeDpc);
+GUEST_FUNCTION_STUB_P(__imp__KeInsertQueueDpc);
+GUEST_FUNCTION_STUB_P(__imp__RtlCompareMemory);
+GUEST_FUNCTION_STUB_P(__imp__VdQuerySystemCommandBuffer);
+GUEST_FUNCTION_STUB_P(__imp__VdSetDisplayModeOverride);
+GUEST_FUNCTION_STUB_P(__imp__VdSetSystemCommandBuffer);
+GUEST_FUNCTION_STUB_P(__imp__XexLoadImage);
+GUEST_FUNCTION_STUB_P(__imp__XexUnloadImageAndExitThread);
+GUEST_FUNCTION_STUB_P(__imp__KeSetCurrentProcessType);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetCleanup);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetCreateKey);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetRandom);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetRegisterKey);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetUnregisterKey);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetXnAddrToInAddr);
+GUEST_FUNCTION_STUB_P(__imp__XGetVideoCapabilities);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetConnect);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetInAddrToServer);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetInAddrToString);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetInAddrToXnAddr);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetServerToInAddr);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetTsAddrToInAddr);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetUnregisterInAddr);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetXnAddrToMachineId);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetDnsLookup);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetDnsRelease);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetConnectStatus);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetDebugXnAddr);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetQosListen);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetQosLookup);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetQosRelease);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetQosServiceLookup);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_getsockopt);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_ioctlsocket);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_shutdown);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetBroadcastVersionStatus);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetEthernetLinkStatus);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetOpt);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetQosGetListenStats);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetSetOpt);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_getpeername);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_getsockname);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_recvfrom);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSACancelOverlappedIO);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSAGetOverlappedResult);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSARecv);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSARecvFrom);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSASend);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_sendto);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSACloseEvent);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSACreateEvent);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSAEventSelect);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSAGetLastError);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSASendTo);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSASetEvent);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSASetLastError);
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSAResetEvent); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_WSAWaitForMultipleEvents); 
+GUEST_FUNCTION_STUB_P(__imp__XamAlloc); 
+GUEST_FUNCTION_STUB_P(__imp__XamAllocEx); 
+GUEST_FUNCTION_STUB_P(__imp__XamFree); 
+GUEST_FUNCTION_STUB_P(__imp__XamSessionRefObjByHandle); 
+GUEST_FUNCTION_STUB_P(__imp__XNetLogonGetMachineID); 
+GUEST_FUNCTION_STUB_P(__imp__XNetLogonGetTitleID); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpConfigUPnP); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLoadConfigParams); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpSaveConfigParams); 
+GUEST_FUNCTION_STUB_P(__imp__XamCreateEnumeratorHandle); 
+GUEST_FUNCTION_STUB_P(__imp__XamGetPrivateEnumStructureFromHandle); 
+GUEST_FUNCTION_STUB_P(__imp__XamSessionCreateHandle); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserGetMembershipTierFromXUID); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserGetOnlineCountryFromXUID); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpCapture); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpConfig); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpEthernetInterceptRecv); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpEthernetInterceptSetCallbacks); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpEthernetInterceptXmit); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpGetConfigStatus); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLoadMachineAccount); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpSaveMachineAccount); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonClearQEvent); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonGetQFlags); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonGetQVals); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonGetStatus); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonSetPState); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonSetQEvent); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonSetQFlags); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpLogonSetQVals); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpGetActiveSocketList); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpGetVlanXboxName); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpNoteSystemTime); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpRegisterKeyForCallerType); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpSetVlanXboxName); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XnpUnregisterKeyForCallerType); 
+GUEST_FUNCTION_STUB_P(__imp__XamXStudioRequest); 
+GUEST_FUNCTION_STUB_P(__imp__XNotifyPositionUI); 
+GUEST_FUNCTION_STUB_P(__imp__XamContentOpenFile); 
+GUEST_FUNCTION_STUB_P(__imp__XamGetActiveDashAppInfo); 
+GUEST_FUNCTION_STUB_P(__imp__XamIsUIActive); 
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraTiltGetStatus); 
+GUEST_FUNCTION_STUB_P(__imp__XamNuiIdentityGetSessionId); 
+GUEST_FUNCTION_STUB_P(__imp__XamProfileCreateEnumerator); 
+GUEST_FUNCTION_STUB_P(__imp__XamProfileEnumerate); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserNuiGetUserIndex); 
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraElevationGetAngle);
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraElevationSetAngle);
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraElevationStopMovement);
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraRememberFloor);
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraTiltReportStatus);
+GUEST_FUNCTION_STUB_P(__imp__XamNuiCameraTiltSetCallback);
+GUEST_FUNCTION_STUB_P(__imp__XamXlfsInitializeUploadQueue);
+GUEST_FUNCTION_STUB_P(__imp__XamXlfsUninitializeUploadQueue);
+GUEST_FUNCTION_STUB_P(__imp__XamCacheCloseFile); 
+GUEST_FUNCTION_STUB_P(__imp__XamCacheOpenFile); 
+GUEST_FUNCTION_STUB_P(__imp__XamCacheReset); 
+GUEST_FUNCTION_STUB_P(__imp__XamReadBiometricData); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserGetIndexFromXUID); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserNuiGetEnrollmentIndex); 
+GUEST_FUNCTION_STUB_P(__imp__XamXlfsMountUploadQueueInstance); 
+GUEST_FUNCTION_STUB_P(__imp__XamXlfsUnmountUploadQueueInstance); 
+GUEST_FUNCTION_STUB_P(__imp__MmMapIoSpace); 
+GUEST_FUNCTION_STUB_P(__imp__PsCamDeviceRequest); 
+GUEST_FUNCTION_STUB_P(__imp__XamGetOverlappedResult); 
+GUEST_FUNCTION_STUB_P(__imp__XamTaskSchedule); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserNuiEnableBiometric); 
+GUEST_FUNCTION_STUB_P(__imp__XamWriteBiometricData); 
+GUEST_FUNCTION_STUB_P(__imp__XAudioGetSpeakerConfig); 
+GUEST_FUNCTION_STUB_P(__imp__XMsgCompleteIORequest); 
+GUEST_FUNCTION_STUB_P(__imp__EtxProducerLog); 
+GUEST_FUNCTION_STUB_P(__imp__EtxProducerRegister); 
+GUEST_FUNCTION_STUB_P(__imp__EtxProducerUnregister); 
+GUEST_FUNCTION_STUB_P(__imp__KeInitializeMutant); 
+GUEST_FUNCTION_STUB_P(__imp__KeReleaseMutant); 
+GUEST_FUNCTION_STUB_P(__imp__KeRestoreFloatingPointState); 
+GUEST_FUNCTION_STUB_P(__imp__KeSaveFloatingPointState); 
+GUEST_FUNCTION_STUB_P(__imp__ObCreateObject); 
+GUEST_FUNCTION_STUB_P(__imp__LDICreateDecompression); 
+GUEST_FUNCTION_STUB_P(__imp__LDIDecompress); 
+GUEST_FUNCTION_STUB_P(__imp__LDIDestroyDecompression); 
+GUEST_FUNCTION_STUB_P(__imp__NtDeviceIoControlFile); 
+GUEST_FUNCTION_STUB_P(__imp__XeCryptSha256Final); 
+GUEST_FUNCTION_STUB_P(__imp__XeCryptSha256Init); 
+GUEST_FUNCTION_STUB_P(__imp__XeCryptSha256Update); 
+GUEST_FUNCTION_STUB_P(__imp__XeKeysGetConsoleID); 
+GUEST_FUNCTION_STUB_P(__imp__ExAllocatePool); 
+GUEST_FUNCTION_STUB_P(__imp__FscGetCacheElementCount); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetXnAddrPlatform); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetReplaceKey); 
+GUEST_FUNCTION_STUB_P(__imp__NtWriteFileGather); 
+GUEST_FUNCTION_STUB_P(__imp__XeCryptShaFinal); 
+GUEST_FUNCTION_STUB_P(__imp__XeCryptShaInit); 
+GUEST_FUNCTION_STUB_P(__imp__XeCryptShaUpdate); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetDnsReverseLookup); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetDnsReverseRelease); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetGetSystemLinkPort); 
+GUEST_FUNCTION_STUB_P(__imp__NetDll_XNetSetSystemLinkPort); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserGetDeviceContext); 
+GUEST_FUNCTION_STUB_P(__imp__XamUserWriteProfileSettings); 
+GUEST_FUNCTION_STUB_P(__imp__XamVoiceHeadsetPresent); 
+GUEST_FUNCTION_STUB_P(__imp__XamVoiceIsActiveProcess); 
+GUEST_FUNCTION_STUB_P(__imp__XamVoiceClose); 
+GUEST_FUNCTION_STUB_P(__imp__XamVoiceCreate); 
+GUEST_FUNCTION_STUB_P(__imp__XamVoiceSubmitPacket); 
+GUEST_FUNCTION_STUB_P(__imp__XAudioEnableDucker); 
+GUEST_FUNCTION_STUB_P(__imp__XAudioGetDuckerAttackTime); 
+GUEST_FUNCTION_STUB_P(__imp__XAudioGetDuckerHoldTime); 
+GUEST_FUNCTION_STUB_P(__imp__XAudioGetDuckerLevel); 
+GUEST_FUNCTION_STUB_P(__imp__XAudioGetDuckerReleaseTime); 
+GUEST_FUNCTION_STUB_P(__imp__NtCancelTimer);
+GUEST_FUNCTION_STUB_P(__imp__NtCreateTimer);
+GUEST_FUNCTION_STUB_P(__imp__NtSetTimerEx);
+GUEST_FUNCTION_STUB_P(__imp__XAudioGetDuckerThreshold);

@@ -353,3 +353,7 @@ T GuestToHostFunction(const TFunction& func, TArgs&&... argv)
 
 #define GUEST_FUNCTION_STUB(subroutine) \
     PPC_FUNC(subroutine) { }
+
+// stub and print
+#define GUEST_FUNCTION_STUB_P(subroutine) \
+    PPC_FUNC(subroutine) { printf(#subroutine " is Stubbed\n"); }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <user/config.h>
+#include <config.h>
 
 class App
 {
@@ -12,7 +12,7 @@ public:
     static inline bool s_isWerehog;
     static inline bool s_isSaveDataCorrupt;
 
-    static inline ELanguage s_language;
+    //static inline ELanguage s_language;
 
     static inline double s_deltaTime;
     static inline double s_time = 0.0; // How much time elapsed since the game started.

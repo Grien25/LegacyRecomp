@@ -1,6 +1,6 @@
 #pragma once
 
-#include <locale/locale.h>
+//#include <locale/locale.h>
 
 class IConfigDef
 {
@@ -11,20 +11,17 @@ public:
     virtual void MakeDefault() = 0;
     virtual std::string_view GetSection() const = 0;
     virtual std::string_view GetName() const = 0;
-    virtual std::string GetNameLocalised(ELanguage language) const = 0;
-    virtual std::string GetDescription(ELanguage language) const = 0;
+    //virtual std::string GetNameLocalised(ELanguage language) const = 0;
+    //virtual std::string GetDescription(ELanguage language) const = 0;
     virtual bool IsDefaultValue() const = 0;
     virtual const void* GetValue() const = 0;
-    virtual std::string GetValueLocalised(ELanguage language) const = 0;
-    virtual std::string GetValueDescription(ELanguage language) const = 0;
+    //virtual std::string GetValueLocalised(ELanguage language) const = 0;
+    //virtual std::string GetValueDescription(ELanguage language) const = 0;
     virtual std::string GetDefinition(bool withSection = false) const = 0;
     virtual std::string ToString(bool strWithQuotes = true) const = 0;
     virtual void GetLocaleStrings(std::vector<std::string_view>& localeStrings) const = 0;
     virtual void SnapToNearestAccessibleValue(bool searchUp) = 0;
 };
-
-#define CONFIG_LOCALE            std::unordered_map<ELanguage, std::tuple<std::string, std::string>>
-#define CONFIG_ENUM_LOCALE(type) std::unordered_map<ELanguage, std::unordered_map<type, std::tuple<std::string, std::string>>>
 
 #define CONFIG_CALLBACK(name)       if (name.Callback) name.Callback(&name)
 #define CONFIG_LOCK_CALLBACK(name)  if (name.LockCallback) name.LockCallback(&name)
@@ -156,13 +153,13 @@ class ConfigDef final : public IConfigDef
 public:
     std::string Section{};
     std::string Name{};
-    CONFIG_LOCALE* Locale{};
+    //CONFIG_LOCALE* Locale{};
     T DefaultValue{};
     T Value{ DefaultValue };
     std::set<T> InaccessibleValues{};
     std::unordered_map<std::string, T>* EnumTemplate{};
     std::map<T, std::string> EnumTemplateReverse{};
-    CONFIG_ENUM_LOCALE(T)* EnumLocale{};
+    //CONFIG_ENUM_LOCALE(T)* EnumLocale {};
     std::function<void(ConfigDef<T, isHidden>*)> Callback;
     std::function<void(ConfigDef<T, isHidden>*)> LockCallback;
     std::function<void(ConfigDef<T, isHidden>*)> ApplyCallback;
@@ -172,13 +169,13 @@ public:
     ConfigDef(std::string section, std::string name, T defaultValue);
 
     // CONFIG_DEFINE_LOCALISED
-    ConfigDef(std::string section, std::string name, CONFIG_LOCALE* nameLocale, T defaultValue);
+    //ConfigDef(std::string section, std::string name, CONFIG_LOCALE* nameLocale, T defaultValue);
 
     // CONFIG_DEFINE_ENUM
     ConfigDef(std::string section, std::string name, T defaultValue, std::unordered_map<std::string, T>* enumTemplate);
 
     // CONFIG_DEFINE_ENUM_LOCALISED
-    ConfigDef(std::string section, std::string name, CONFIG_LOCALE* nameLocale, T defaultValue, std::unordered_map<std::string, T>* enumTemplate, CONFIG_ENUM_LOCALE(T)* enumLocale);
+    //ConfigDef(std::string section, std::string name, CONFIG_LOCALE* nameLocale, T defaultValue, std::unordered_map<std::string, T>* enumTemplate, CONFIG_ENUM_LOCALE(T)* enumLocale);
 
     ConfigDef(const ConfigDef&) = delete;
     ConfigDef(ConfigDef&&) = delete;
@@ -189,12 +186,12 @@ public:
     void MakeDefault() override;
     std::string_view GetSection() const override;
     std::string_view GetName() const override;
-    std::string GetNameLocalised(ELanguage language) const override;
-    std::string GetDescription(ELanguage language) const override;
+    //std::string GetNameLocalised(ELanguage language) const override;
+    //std::string GetDescription(ELanguage language) const override;
     bool IsDefaultValue() const override;
     const void* GetValue() const override;
-    std::string GetValueLocalised(ELanguage language) const override;
-    std::string GetValueDescription(ELanguage language) const override;
+    //std::string GetValueLocalised(ELanguage language) const override;
+    //std::string GetValueDescription(ELanguage language) const override;
     std::string GetDefinition(bool withSection = false) const override;
     std::string ToString(bool strWithQuotes = true) const override;
     void GetLocaleStrings(std::vector<std::string_view>& localeStrings) const override;
@@ -223,7 +220,7 @@ public:
 class Config
 {
 public:
-    #include "config_def.h"
+//#include "config_def.h"
 
     static inline bool s_isCallbacksCreated;
 

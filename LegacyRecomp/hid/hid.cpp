@@ -1,6 +1,6 @@
 #include "hid.h"
 #include <ui/game_window.h>
-#include <user/config.h>
+#include <config.h>
 
 hid::EInputDevice hid::g_inputDevice;
 hid::EInputDevice hid::g_inputDeviceController;
@@ -19,7 +19,7 @@ void hid::SetProhibitedInputs(uint16_t wButtons, bool leftStick, bool rightStick
 
 bool hid::IsInputAllowed()
 {
-    return GameWindow::s_isFocused || Config::AllowBackgroundInput;
+    //return GameWindow::s_isFocused || Config::AllowBackgroundInput;
 }
 
 bool hid::IsInputDeviceController()

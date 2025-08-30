@@ -6,14 +6,14 @@
 #include <app.h>
 #include <sdl_listener.h>
 #include <SDL_syswm.h>
+#include "../config.h"
 
 #if _WIN32
 #include <dwmapi.h>
 #include <shellscalingapi.h>
 #endif
 
-#include <res/images/game_icon.bmp.h>
-#include <res/images/game_icon_night.bmp.h>
+
 
 bool m_isFullscreenKeyReleased = true;
 bool m_isResizing = false;
@@ -53,15 +53,15 @@ int Window_OnSDLEvent(void*, SDL_Event* event)
                     if (!(event->key.keysym.mod & KMOD_ALT) || !m_isFullscreenKeyReleased)
                         break;
 
-                    Config::Fullscreen = GameWindow::SetFullscreen(!GameWindow::IsFullscreen());
-
-                    if (Config::Fullscreen)
+                    
+                    GameWindow::SetFullscreen(!GameWindow::IsFullscreen());
+                    if (0)
                     {
-                        Config::Monitor = GameWindow::GetDisplay();
+                        //GameWindow::GetDisplay();
                     }
                     else
                     {
-                        Config::WindowState = GameWindow::SetMaximised(Config::WindowState == EWindowState::Maximised);
+                        //GameWindow::SetMaximised(Config::WindowState == EWindowState::Maximised);
                     }
 
                     // Block holding ALT+ENTER spamming window changes.
@@ -72,7 +72,7 @@ int Window_OnSDLEvent(void*, SDL_Event* event)
 
                 // Restore original window dimensions on F2.
                 case SDLK_F2:
-                    Config::Fullscreen = GameWindow::SetFullscreen(false);
+                    //Config::Fullscreen = GameWindow::SetFullscreen(false);
                     GameWindow::ResetDimensions();
                     break;
 
@@ -122,16 +122,16 @@ int Window_OnSDLEvent(void*, SDL_Event* event)
                 }
 
                 case SDL_WINDOWEVENT_RESTORED:
-                    Config::WindowState = EWindowState::Normal;
+                   // Config::WindowState = EWindowState::Normal;
                     break;
 
                 case SDL_WINDOWEVENT_MAXIMIZED:
-                    Config::WindowState = EWindowState::Maximised;
+                    //Config::WindowState = EWindowState::Maximised;
                     break;
 
                 case SDL_WINDOWEVENT_RESIZED:
                     m_isResizing = true;
-                    Config::WindowSize = -1;
+                    //Config::WindowSize = -1;
                     GameWindow::s_width = event->window.data1;
                     GameWindow::s_height = event->window.data2;
                     GameWindow::SetTitle(fmt::format("{} - [{}x{}]", GameWindow::GetTitle(), GameWindow::s_width, GameWindow::s_height).c_str());
@@ -179,10 +179,10 @@ void GameWindow::Init(const char* sdlVideoDriver)
     SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 #endif
 
-    s_x = Config::WindowX;
-    s_y = Config::WindowY;
-    s_width = Config::WindowWidth;
-    s_height = Config::WindowHeight;
+    //s_x = Config::WindowX;
+    //s_y = Config::WindowY;
+    //s_width = Config::WindowWidth;
+    //s_height = Config::WindowHeight;
 
     if (s_x == -1 && s_y == -1)
         s_x = s_y = SDL_WINDOWPOS_CENTERED;
@@ -195,7 +195,7 @@ void GameWindow::Init(const char* sdlVideoDriver)
     if (IsFullscreen())
         SDL_ShowCursor(SDL_DISABLE);
 
-    SetDisplay(Config::Monitor);
+    //SetDisplay(Config::Monitor);
     SetIcon();
     SetTitle();
 
@@ -208,11 +208,11 @@ void GameWindow::Init(const char* sdlVideoDriver)
 #if defined(_WIN32)
     s_renderWindow = info.info.win.window;
 
-    if (Config::DisableDWMRoundedCorners)
-    {
-        DWM_WINDOW_CORNER_PREFERENCE wcp = DWMWCP_DONOTROUND;
-        DwmSetWindowAttribute(s_renderWindow, DWMWA_WINDOW_CORNER_PREFERENCE, &wcp, sizeof(wcp));
-    }
+    //if (Config::DisableDWMRoundedCorners)
+    //{
+    //    DWM_WINDOW_CORNER_PREFERENCE wcp = DWMWCP_DONOTROUND;
+    //    DwmSetWindowAttribute(s_renderWindow, DWMWA_WINDOW_CORNER_PREFERENCE, &wcp, sizeof(wcp));
+    //}
 #elif defined(SDL_VULKAN_ENABLED)
     s_renderWindow = s_pWindow;
 #elif defined(__linux__)
@@ -230,10 +230,10 @@ void GameWindow::Update()
 {
     if (!GameWindow::IsFullscreen() && !GameWindow::IsMaximised() && !s_isChangingDisplay)
     {
-        Config::WindowX = GameWindow::s_x;
-        Config::WindowY = GameWindow::s_y;
-        Config::WindowWidth = GameWindow::s_width;
-        Config::WindowHeight = GameWindow::s_height;
+        //Config::WindowX = GameWindow::s_x;
+        //Config::WindowY = GameWindow::s_y;
+        //Config::WindowWidth = GameWindow::s_width;
+        //Config::WindowHeight = GameWindow::s_height;
     }
 
     if (m_isResizing)
@@ -270,29 +270,29 @@ void GameWindow::SetIcon(bool isNight)
 {
     if (isNight)
     {
-        SetIcon(g_game_icon_night, sizeof(g_game_icon_night));
+       // SetIcon(g_game_icon_night, sizeof(g_game_icon_night));
     }
     else
     {
-        SetIcon(g_game_icon, sizeof(g_game_icon));
+       // SetIcon(g_game_icon, sizeof(g_game_icon));
     }
 }
 
 const char* GameWindow::GetTitle()
 {
-    if (Config::UseOfficialTitleOnTitleBar)
-    {
-        auto isSWA = Config::Language == ELanguage::Japanese;
+    //if (Config::UseOfficialTitleOnTitleBar)
+    //{
+    //    auto isSWA = Config::Language == ELanguage::Japanese;
+    //
+    //    if (Config::UseAlternateTitle)
+    //        isSWA = !isSWA;
+    //
+    //    return isSWA
+    //        ? "SONIC WORLD ADVENTURE"
+    //        : "SONIC UNLEASHED";
+    //}
 
-        if (Config::UseAlternateTitle)
-            isSWA = !isSWA;
-
-        return isSWA
-            ? "SONIC WORLD ADVENTURE"
-            : "SONIC UNLEASHED";
-    }
-
-    return "Unleashed Recompiled";
+    return "Legacy Recompiled";
 }
 
 void GameWindow::SetTitle(const char* title)
@@ -338,7 +338,7 @@ bool GameWindow::SetFullscreen(bool isEnabled)
         SDL_ShowCursor(SDL_ENABLE);
 
         SetIcon(GameWindow::s_isIconNight);
-        SetDimensions(Config::WindowWidth, Config::WindowHeight, Config::WindowX, Config::WindowY);
+        //SetDimensions(Config::WindowWidth, Config::WindowHeight, Config::WindowX, Config::WindowY);
     }
 
     return isEnabled;
@@ -363,21 +363,21 @@ bool GameWindow::IsMaximised()
     return SDL_GetWindowFlags(s_pWindow) & SDL_WINDOW_MAXIMIZED;
 }
 
-EWindowState GameWindow::SetMaximised(bool isEnabled)
-{
-    if (isEnabled)
-    {
-        SDL_MaximizeWindow(s_pWindow);
-    }
-    else
-    {
-        SDL_RestoreWindow(s_pWindow);
-    }
-
-    return isEnabled
-        ? EWindowState::Maximised
-        : EWindowState::Normal;
-}
+//EWindowState GameWindow::SetMaximised(bool isEnabled)
+//{
+//    if (isEnabled)
+//    {
+//        SDL_MaximizeWindow(s_pWindow);
+//    }
+//    else
+//    {
+//        SDL_RestoreWindow(s_pWindow);
+//    }
+//
+//    return isEnabled
+//        ? EWindowState::Maximised
+//        : EWindowState::Normal;
+//}
 
 SDL_Rect GameWindow::GetDimensions()
 {
@@ -415,21 +415,21 @@ void GameWindow::ResetDimensions()
     s_width = DEFAULT_WIDTH;
     s_height = DEFAULT_HEIGHT;
 
-    Config::WindowX = s_x;
-    Config::WindowY = s_y;
-    Config::WindowWidth = s_width;
-    Config::WindowHeight = s_height;
+    //Config::WindowX = s_x;
+    //Config::WindowY = s_y;
+    //Config::WindowWidth = s_width;
+    //Config::WindowHeight = s_height;
 }
 
 uint32_t GameWindow::GetWindowFlags()
 {
     uint32_t flags = SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
 
-    if (Config::WindowState == EWindowState::Maximised)
-        flags |= SDL_WINDOW_MAXIMIZED;
-
-    if (Config::Fullscreen)
-        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    //if (Config::WindowState == EWindowState::Maximised)
+    //    flags |= SDL_WINDOW_MAXIMIZED;
+    //
+    //if (Config::Fullscreen)
+    //    flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
 #ifdef SDL_VULKAN_ENABLED
     flags |= SDL_WINDOW_VULKAN;
@@ -568,8 +568,8 @@ bool GameWindow::IsPositionValid()
             auto y = s_y;
 
             // Window spans across the entire display in windowed mode, which is invalid.
-            if (!Config::Fullscreen && s_width == bounds.w && s_height == bounds.h)
-                return false;
+            //if (!Config::Fullscreen && s_width == bounds.w && s_height == bounds.h)
+            //    return false;
 
             if (x == SDL_WINDOWPOS_CENTERED_DISPLAY(i))
                 x = bounds.w / 2 - s_width / 2;

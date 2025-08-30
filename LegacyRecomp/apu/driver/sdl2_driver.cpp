@@ -2,7 +2,7 @@
 #include <cpu/guest_thread.h>
 #include <kernel/heap.h>
 #include <os/logger.h>
-#include <user/config.h>
+#include <config.h>
 
 static PPCFunc* g_clientCallback{};
 static uint32_t g_clientCallbackParam{}; // pointer in guest memory
@@ -14,7 +14,8 @@ static void CreateAudioDevice()
     if (g_audioDevice != NULL)
         SDL_CloseAudioDevice(g_audioDevice);
 
-    bool surround = Config::ChannelConfiguration == EChannelConfiguration::Surround;
+    //bool surround = Config::ChannelConfiguration == EChannelConfiguration::Surround;
+    bool surround = true;
     int allowedChanges = surround ? SDL_AUDIO_ALLOW_CHANNELS_CHANGE : 0;
 
     SDL_AudioSpec desired{}, obtained{};
@@ -131,8 +132,15 @@ void XAudioSubmitFrame(void* samples)
             float ch4 = floatSamples[4 * XAUDIO_NUM_SAMPLES + i];
             float ch5 = floatSamples[5 * XAUDIO_NUM_SAMPLES + i];
 
-            audioFrames[i * 2 + 0] = (ch0 + ch2 * 0.75f + ch4) * Config::MasterVolume;
-            audioFrames[i * 2 + 1] = (ch1 + ch2 * 0.75f + ch5) * Config::MasterVolume;
+
+
+            //
+            // TODO Fix
+            //
+            //audioFrames[i * 2 + 0] = (ch0 + ch2 * 0.75f + ch4) * Config::MasterVolume;
+            //audioFrames[i * 2 + 1] = (ch1 + ch2 * 0.75f + ch5) * Config::MasterVolume;
+            audioFrames[i * 2 + 0] = (ch0 + ch2 * 0.75f + ch4) * 100;
+            audioFrames[i * 2 + 1] = (ch1 + ch2 * 0.75f + ch5) * 100;
         }
 
         SDL_QueueAudio(g_audioDevice, &audioFrames, sizeof(audioFrames));
@@ -144,7 +152,11 @@ void XAudioSubmitFrame(void* samples)
         for (size_t i = 0; i < XAUDIO_NUM_SAMPLES; i++)
         {
             for (size_t j = 0; j < XAUDIO_NUM_CHANNELS; j++)
-                audioFrames[i * XAUDIO_NUM_CHANNELS + j] = floatSamples[j * XAUDIO_NUM_SAMPLES + i] * Config::MasterVolume;
+            {
+                // audioFrames[i * XAUDIO_NUM_CHANNELS + j] = floatSamples[j * XAUDIO_NUM_SAMPLES + i] * Config::MasterVolume;
+                audioFrames[i * XAUDIO_NUM_CHANNELS + j] = floatSamples[j * XAUDIO_NUM_SAMPLES + i] * 100;
+            }
+               
         }
 
         SDL_QueueAudio(g_audioDevice, &audioFrames, sizeof(audioFrames));

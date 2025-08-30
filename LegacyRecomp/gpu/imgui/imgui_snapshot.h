@@ -22,7 +22,12 @@ struct ImFontAtlasSnapshot
 
     void Snap();
 
-    static ImFontAtlas* Load();
+    //
+    // TODO Fix
+    static ImFontAtlas* Load()
+    {
+        return nullptr;
+    };
 
     static void GenerateGlyphRanges();
 

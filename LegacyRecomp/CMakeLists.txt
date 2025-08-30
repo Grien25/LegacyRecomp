@@ -76,10 +76,6 @@ set(UNLEASHED_RECOMP_KERNEL_CXX_SOURCES
     "kernel/io/file_system.cpp"
 )
 
-set(UNLEASHED_RECOMP_LOCALE_CXX_SOURCES
-    "locale/config_locale.cpp"
-    "locale/locale.cpp"
-)
 
 if (WIN32)
     set(UNLEASHED_RECOMP_OS_CXX_SOURCES
@@ -128,68 +124,13 @@ set(UNLEASHED_RECOMP_HID_CXX_SOURCES
     "hid/driver/sdl_hid.cpp"
 )
 
-set(UNLEASHED_RECOMP_PATCHES_CXX_SOURCES
-    "patches/aspect_ratio_patches.cpp"
-    "patches/audio_patches.cpp"
-    "patches/camera_patches.cpp"
-    "patches/CGameModeStageTitle_patches.cpp"
-    "patches/CHudPause_patches.cpp"
-    "patches/CTitleStateIntro_patches.cpp"
-    "patches/CTitleStateMenu_patches.cpp"
-    "patches/fps_patches.cpp"
-    "patches/frontend_listener.cpp"
-    "patches/input_patches.cpp"
-    "patches/inspire_patches.cpp"
-    "patches/misc_patches.cpp"
-    "patches/object_patches.cpp"
-    "patches/player_patches.cpp"
-    "patches/resident_patches.cpp"
-    "patches/video_patches.cpp"
-)
-
 set(UNLEASHED_RECOMP_UI_CXX_SOURCES
-    "ui/achievement_menu.cpp"
-    "ui/achievement_overlay.cpp"
-    "ui/black_bar.cpp"
-    "ui/button_guide.cpp"
-    "ui/fader.cpp"
     "ui/game_window.cpp"
-    "ui/imgui_utils.cpp"
-    "ui/installer_wizard.cpp"
-    "ui/message_window.cpp"
-    "ui/options_menu.cpp"
-    "ui/options_menu_thumbnails.cpp"
-    "ui/tv_static.cpp"
 )
 
-set(UNLEASHED_RECOMP_INSTALL_CXX_SOURCES
-    "install/installer.cpp"
-    "install/iso_file_system.cpp"
-    "install/update_checker.cpp"
-    "install/xcontent_file_system.cpp"
-    "install/hashes/apotos_shamar.cpp"
-    "install/hashes/chunnan.cpp"
-    "install/hashes/empire_city_adabat.cpp"
-    "install/hashes/game.cpp"
-    "install/hashes/holoska.cpp"
-    "install/hashes/mazuri.cpp"
-    "install/hashes/spagonia.cpp"
-    "install/hashes/update.cpp"
-)
 
-set(UNLEASHED_RECOMP_USER_CXX_SOURCES
-    "user/achievement_data.cpp"
-    "user/achievement_manager.cpp"
-    "user/config.cpp"
-    "user/registry.cpp"
-    "user/paths.cpp"
-    "user/persistent_data.cpp"
-    "user/persistent_storage_manager.cpp"
-)
 
-set(UNLEASHED_RECOMP_MOD_CXX_SOURCES
-    "mod/mod_loader.cpp"
-)
+
 
 set(UNLEASHED_RECOMP_THIRDPARTY_SOURCES
     "${UNLEASHED_RECOMP_THIRDPARTY_ROOT}/imgui/backends/imgui_impl_sdl2.cpp"
@@ -238,21 +179,16 @@ set(UNLEASHED_RECOMP_CXX_SOURCES
     "version.cpp"
     
     ${UNLEASHED_RECOMP_KERNEL_CXX_SOURCES}
-    ${UNLEASHED_RECOMP_LOCALE_CXX_SOURCES}
     ${UNLEASHED_RECOMP_OS_CXX_SOURCES}
     ${UNLEASHED_RECOMP_CPU_CXX_SOURCES}
     ${UNLEASHED_RECOMP_GPU_CXX_SOURCES}
     ${UNLEASHED_RECOMP_APU_CXX_SOURCES}
     ${UNLEASHED_RECOMP_HID_CXX_SOURCES}
-    ${UNLEASHED_RECOMP_PATCHES_CXX_SOURCES}
     ${UNLEASHED_RECOMP_UI_CXX_SOURCES}
-    ${UNLEASHED_RECOMP_INSTALL_CXX_SOURCES}
-    ${UNLEASHED_RECOMP_USER_CXX_SOURCES}
-    ${UNLEASHED_RECOMP_MOD_CXX_SOURCES}
     ${UNLEASHED_RECOMP_THIRDPARTY_SOURCES}
 )
 
-include("version.cmake")
+#include("version.cmake")
 
 set(VERSION_TXT "${PROJECT_SOURCE_DIR}/res/version.txt")
 
@@ -262,38 +198,39 @@ if (NOT ${CMAKE_BUILD_TYPE} MATCHES "Release")
     set(SHOW_GIT_INFO_AND_BUILD_TYPE 1)
 endif()
 
-GenerateVersionSources(
-    OUTPUT_DIR ${PROJECT_SOURCE_DIR}
-    VERSION_TXT ${VERSION_TXT}
-    H_TEMPLATE "${PROJECT_SOURCE_DIR}/res/version.h.template"
-    CXX_TEMPLATE "${PROJECT_SOURCE_DIR}/res/version.cpp.template"
-    BUILD_TYPE ${CMAKE_BUILD_TYPE}
-    SHOW_GIT_INFO ${SHOW_GIT_INFO_AND_BUILD_TYPE}
-    SHOW_BUILD_TYPE ${SHOW_GIT_INFO_AND_BUILD_TYPE}
-)
+#GenerateVersionSources(
+#    OUTPUT_DIR ${PROJECT_SOURCE_DIR}
+#    VERSION_TXT ${VERSION_TXT}
+#    H_TEMPLATE "${PROJECT_SOURCE_DIR}/res/version.h.template"
+#    CXX_TEMPLATE "${PROJECT_SOURCE_DIR}/res/version.cpp.template"
+#    BUILD_TYPE ${CMAKE_BUILD_TYPE}
+#    SHOW_GIT_INFO ${SHOW_GIT_INFO_AND_BUILD_TYPE}
+#    SHOW_BUILD_TYPE ${SHOW_GIT_INFO_AND_BUILD_TYPE}
+#)
 
 if (WIN32)
     # Create binary version number for Win32 integer attributes.
-    CreateVersionString(
-        VERSION_TXT ${VERSION_TXT}
-        OUTPUT_CSV 1
-        OUTPUT_VAR WIN32_VERSION_BINARY
-    )
-
-    # Create string version number for Win32 detailed attributes.
-    CreateVersionString(
-        VERSION_TXT ${VERSION_TXT}
-        BUILD_TYPE ${CMAKE_BUILD_TYPE}
-        SHOW_GIT_INFO ${SHOW_GIT_INFO_AND_BUILD_TYPE}
-        SHOW_BUILD_TYPE ${SHOW_GIT_INFO_AND_BUILD_TYPE}
-        OUTPUT_VAR WIN32_VERSION_STRING
-    )
+    #CreateVersionString(
+    #    VERSION_TXT ${VERSION_TXT}
+    #    OUTPUT_CSV 1
+    #    OUTPUT_VAR WIN32_VERSION_BINARY
+    #)
+    #
+    ## Create string version number for Win32 detailed attributes.
+    #CreateVersionString(
+    #    VERSION_TXT ${VERSION_TXT}
+    #    BUILD_TYPE ${CMAKE_BUILD_TYPE}
+    #    SHOW_GIT_INFO ${SHOW_GIT_INFO_AND_BUILD_TYPE}
+    #    SHOW_BUILD_TYPE ${SHOW_GIT_INFO_AND_BUILD_TYPE}
+    #    OUTPUT_VAR WIN32_VERSION_STRING
+    #)
 
     # Set Win32 icon path.
-    set(WIN32_ICON_PATH "${PROJECT_SOURCE_DIR}/../LegacyRecompResources/images/game_icon.ico")
-
-    configure_file("res/win32/res.rc.template" "${CMAKE_BINARY_DIR}/res.rc" @ONLY)
-    add_executable(LegacyRecomp ${UNLEASHED_RECOMP_CXX_SOURCES} "${CMAKE_BINARY_DIR}/res.rc")
+    #set(WIN32_ICON_PATH "${PROJECT_SOURCE_DIR}/../LegacyRecompResources/images/game_icon.ico")
+    #
+    #configure_file("res/win32/res.rc.template" "${CMAKE_BINARY_DIR}/res.rc" @ONLY)
+    #add_executable(LegacyRecomp ${UNLEASHED_RECOMP_CXX_SOURCES} "${CMAKE_BINARY_DIR}/res.rc")
+    add_executable(LegacyRecomp ${UNLEASHED_RECOMP_CXX_SOURCES} "config.cpp")
 
     # Hide console for release configurations.
     if (${CMAKE_BUILD_TYPE} MATCHES "Release")
@@ -379,7 +316,6 @@ target_link_libraries(LegacyRecomp PRIVATE
 
 target_include_directories(LegacyRecomp PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    "${CMAKE_CURRENT_SOURCE_DIR}/api"
     ${UNLEASHED_RECOMP_THIRDPARTY_INCLUDES}
 )
 

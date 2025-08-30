@@ -1,8 +1,8 @@
 #include "imgui_snapshot.h"
 
-#include <locale/locale.h>
-#include <res/font/im_font_atlas.bin.h>
-#include <user/config.h>
+//#include <locale/locale.h>
+//#include <res/font/im_font_atlas.bin.h>
+#include <config.h>
 #include <decompressor.h>
 #include <kernel/xdbf.h>
 #include <app.h>
@@ -108,22 +108,22 @@ void ImFontAtlasSnapshot::Snap()
 
 static std::unique_ptr<uint8_t[]> g_imFontAtlas;
 
-ImFontAtlas* ImFontAtlasSnapshot::Load()
-{
-    g_imFontAtlas = decompressZstd(g_im_font_atlas, g_im_font_atlas_uncompressed_size);
-
-    auto header = reinterpret_cast<ImFontAtlasSnapshotHeader*>(g_imFontAtlas.get());
-    assert(header->imguiVersion == IMGUI_VERSION_NUM && "ImGui version mismatch, the font atlas needs to be regenerated!");
-
-    auto offsetTable = reinterpret_cast<uint32_t*>(g_imFontAtlas.get() + header->offsetsOffset);
-    for (size_t i = 0; i < header->offsetCount; i++)
-    {
-        *reinterpret_cast<size_t*>(g_imFontAtlas.get() + (*offsetTable)) += reinterpret_cast<size_t>(g_imFontAtlas.get());
-        ++offsetTable;
-    }
-
-    return reinterpret_cast<ImFontAtlas*>(g_imFontAtlas.get() + header->dataOffset);
-}
+//ImFontAtlas* ImFontAtlasSnapshot::Load()
+//{
+//    g_imFontAtlas = decompressZstd(g_im_font_atlas, g_im_font_atlas_uncompressed_size);
+//
+//    auto header = reinterpret_cast<ImFontAtlasSnapshotHeader*>(g_imFontAtlas.get());
+//    assert(header->imguiVersion == IMGUI_VERSION_NUM && "ImGui version mismatch, the font atlas needs to be regenerated!");
+//
+//    auto offsetTable = reinterpret_cast<uint32_t*>(g_imFontAtlas.get() + header->offsetsOffset);
+//    for (size_t i = 0; i < header->offsetCount; i++)
+//    {
+//        *reinterpret_cast<size_t*>(g_imFontAtlas.get() + (*offsetTable)) += reinterpret_cast<size_t>(g_imFontAtlas.get());
+//        ++offsetTable;
+//    }
+//
+//    return reinterpret_cast<ImFontAtlas*>(g_imFontAtlas.get() + header->dataOffset);
+//}
 
 
 static void GetGlyphs(std::set<ImWchar>& glyphs, const std::string_view& value)
@@ -154,11 +154,11 @@ void ImFontAtlasSnapshot::GenerateGlyphRanges()
     for (auto& localeString : localeStrings)
         GetGlyphs(glyphs, localeString);
 
-    for (auto& [name, locale] : g_locale)
-    {
-        for (auto& [language, value] : locale)
-            GetGlyphs(glyphs, value);
-    }
+    //for (auto& [name, locale] : g_locale)
+    //{
+    //    for (auto& [language, value] : locale)
+    //        GetGlyphs(glyphs, value);
+    //}
 
     for (size_t i = XDBF_LANGUAGE_ENGLISH; i <= XDBF_LANGUAGE_ITALIAN; i++)
     {

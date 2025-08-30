@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gpu/rhi/plume_render_interface_types.h>
-#include <user/config.h>
+//#include <user/config.h>
 #include <sdl_events.h>
 
 #define DEFAULT_WIDTH 1280
@@ -35,7 +35,7 @@ public:
     static bool SetFullscreen(bool isEnabled);
     static void SetFullscreenCursorVisibility(bool isVisible);
     static bool IsMaximised();
-    static EWindowState SetMaximised(bool isEnabled);
+    //static EWindowState SetMaximised(bool isEnabled);
     static SDL_Rect GetDimensions();
     static void GetSizeInPixels(int *w, int *h);
     static void SetDimensions(int w, int h, int x = SDL_WINDOWPOS_CENTERED, int y = SDL_WINDOWPOS_CENTERED);
