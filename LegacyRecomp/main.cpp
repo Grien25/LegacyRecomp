@@ -231,108 +231,9 @@ int main(int argc, char *argv[])
 
     Config::Load();
 
-    //if (forceInstallationCheck)
-    //{
-    //    // Create the console to show progress to the user, otherwise it will seem as if the game didn't boot at all.
-    //    os::process::ShowConsole();
-    //
-    //    Journal journal;
-    //    double lastProgressMiB = 0.0;
-    //    double lastTotalMib = 0.0;
-    //    Installer::checkInstallIntegrity(GAME_INSTALL_DIRECTORY, journal, [&]()
-    //    {
-    //        constexpr double MiBDivisor = 1024.0 * 1024.0;
-    //        constexpr double MiBProgressThreshold = 128.0;
-    //        double progressMiB = double(journal.progressCounter) / MiBDivisor;
-    //        double totalMiB = double(journal.progressTotal) / MiBDivisor;
-    //        if (journal.progressCounter > 0)
-    //        {
-    //            if ((progressMiB - lastProgressMiB) > MiBProgressThreshold)
-    //            {
-    //                fprintf(stdout, "Checking files: %0.2f MiB / %0.2f MiB\n", progressMiB, totalMiB);
-    //                lastProgressMiB = progressMiB;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if ((totalMiB - lastTotalMib) > MiBProgressThreshold)
-    //            {
-    //                fprintf(stdout, "Scanning files: %0.2f MiB\n", totalMiB);
-    //                lastTotalMib = totalMiB;
-    //            }
-    //        }
-    //
-    //        return true;
-    //    });
-    //
-    //    char resultText[512];
-    //    uint32_t messageBoxStyle;
-    //    if (journal.lastResult == Journal::Result::Success)
-    //    {
-    //        snprintf(resultText, sizeof(resultText), "%s", Localise("IntegrityCheck_Success").c_str());
-    //        fprintf(stdout, "%s\n", resultText);
-    //        messageBoxStyle = SDL_MESSAGEBOX_INFORMATION;
-    //    }
-    //    else
-    //    {
-    //        snprintf(resultText, sizeof(resultText), Localise("IntegrityCheck_Failed").c_str(), journal.lastErrorMessage.c_str());
-    //        fprintf(stderr, "%s\n", resultText);
-    //        messageBoxStyle = SDL_MESSAGEBOX_ERROR;
-    //    }
-    //
-    //    SDL_ShowSimpleMessageBox(messageBoxStyle, GameWindow::GetTitle(), resultText, GameWindow::s_pWindow);
-    //    std::_Exit(int(journal.lastResult));
-    //}
-
-#if defined(_WIN32) && defined(UNLEASHED_RECOMP_D3D12)
-    for (auto& dll : g_D3D12RequiredModules)
-    {
-        //if (!std::filesystem::exists(g_executableRoot / dll))
-        //{
-        //    char text[512];
-        //    snprintf(text, sizeof(text), Localise("System_Win32_MissingDLLs").c_str(), dll.data());
-        //    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), text, GameWindow::s_pWindow);
-        //    std::_Exit(1);
-        //}
-    }
-#endif
-
-    // Check the time since the last time an update was checked. Store the new time if the difference is more than six hours.
-    //constexpr double TimeBetweenUpdateChecksInSeconds = 6 * 60 * 60;
-    //time_t timeNow = std::time(nullptr);
-    //double timeDifferenceSeconds = difftime(timeNow, Config::LastChecked);
-    //if (timeDifferenceSeconds > TimeBetweenUpdateChecksInSeconds)
-    //{
-    //    UpdateChecker::initialize();
-    //    UpdateChecker::start();
-    //    Config::LastChecked = timeNow;
-    //    Config::Save();
-    //}
-    //
-    //if (Config::ShowConsole)
-    //    os::process::ShowConsole();
-
     HostStartup();
 
-    // TEMP, we would want to load it dinamicaly, idk a config or something
-    std::filesystem::path modulePath = "F:/priv/LCE_RECOMP/private/tu2.xex";
-    
-    
-    //bool isGameInstalled = Installer::checkGameInstall(GAME_INSTALL_DIRECTORY, modulePath);
-    //bool runInstallerWizard = forceInstaller || forceDLCInstaller || !isGameInstalled;
-    //if (runInstallerWizard)
-    //{
-    //    if (!Video::CreateHostDevice(sdlVideoDriver, graphicsApiRetry))
-    //    {
-    //        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, GameWindow::GetTitle(), "Video_BackendError", GameWindow::s_pWindow);
-    //        std::_Exit(1);
-    //    }
-    //
-    //    //if (!InstallerWizard::Run(GAME_INSTALL_DIRECTORY, isGameInstalled && forceDLCInstaller))
-    //    //{
-    //    //    std::_Exit(0);
-    //    //}
-    //}
+  
 
     if (!Video::CreateHostDevice(sdlVideoDriver, graphicsApiRetry))
     {
@@ -342,14 +243,17 @@ int main(int argc, char *argv[])
 
     
 
-    //if (!PersistentStorageManager::LoadBinary())
-    //    LOGFN_ERROR("Failed to load persistent storage binary... (status code {})", (int)PersistentStorageManager::BinStatus);
-
     KiSystemStartup();
 
-    uint32_t entry = LdrLoadModule(modulePath);
 
-   
+    // TEMP, we would want to load it dinamicaly, idk a config or something
+    std::filesystem::path modulePath = "F:/priv/LCE_RECOMP/private/tu2.xex";
+
+    //
+    // TODO Note:
+    // Support encrypted mode, so you don't need to decrypt the xex yourself.
+    // i think unleashed did that with the installer, but we yeeted their installer lol
+    uint32_t entry = LdrLoadModule(modulePath);
 
     Video::StartPipelinePrecompilation();
 
@@ -358,6 +262,8 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+
+#define _DEBUG 1
 GUEST_FUNCTION_STUB_P(__imp__vsprintf);
 GUEST_FUNCTION_STUB_P(__imp___vsnprintf);
 GUEST_FUNCTION_STUB_P(__imp__sprintf);
