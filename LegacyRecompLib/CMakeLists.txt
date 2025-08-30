@@ -22,7 +22,7 @@ set(UNLEASHED_RECOMP_PPC_RECOMPILED_SOURCES
 )
 
 # change range 
-foreach(i RANGE 0 260)
+foreach(i RANGE 0 179)
     list(APPEND UNLEASHED_RECOMP_PPC_RECOMPILED_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/ppc/ppc_recomp.${i}.cpp")
 endforeach()
 
