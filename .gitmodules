@@ -1,6 +1,7 @@
 [submodule "tools/XenonRecomp"]
 	path = tools/XenonRecomp
 	url = https://github.com/LCE-R-D/XenonRecomp.git
+    branch = main
 [submodule "thirdparty/ddspp"]
 	path = thirdparty/ddspp
 	url = https://github.com/redorav/ddspp.git
