@@ -20,40 +20,54 @@ uint32_t GetTickCountImpl()
     return uint32_t(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
 }
 
-void GlobalMemoryStatusImpl(XLPMEMORYSTATUS lpMemoryStatus)
-{
-    lpMemoryStatus->dwLength = sizeof(XMEMORYSTATUS);
-    lpMemoryStatus->dwMemoryLoad = 0;
-    lpMemoryStatus->dwTotalPhys = 0x20000000;
-    lpMemoryStatus->dwAvailPhys = 0x20000000;
-    lpMemoryStatus->dwTotalPageFile = 0x20000000;
-    lpMemoryStatus->dwAvailPageFile = 0x20000000;
-    lpMemoryStatus->dwTotalVirtual = 0x20000000;
-    lpMemoryStatus->dwAvailVirtual = 0x20000000;
-}
 
-GUEST_FUNCTION_HOOK(sub_831B0ED0, memcpy);
-GUEST_FUNCTION_HOOK(sub_831CCB98, memcpy);
-GUEST_FUNCTION_HOOK(sub_831CEAE0, memcpy);
-GUEST_FUNCTION_HOOK(sub_831CEE04, memcpy);
-GUEST_FUNCTION_HOOK(sub_831CF2D0, memcpy);
-GUEST_FUNCTION_HOOK(sub_831CF660, memcpy);
-GUEST_FUNCTION_HOOK(sub_831B1358, memcpy);
-GUEST_FUNCTION_HOOK(sub_831B5E00, memmove);
-GUEST_FUNCTION_HOOK(sub_831B0BA0, memset);
-GUEST_FUNCTION_HOOK(sub_831CCAA0, memset);
 
-#ifdef _WIN32
-GUEST_FUNCTION_HOOK(sub_82BD4CA8, OutputDebugStringA);
-#else
-GUEST_FUNCTION_STUB(sub_82BD4CA8);
-#endif
+GUEST_FUNCTION_HOOK(sub_822C4F70, QueryPerformanceCounterImpl);
+GUEST_FUNCTION_HOOK(sub_822C4F90, QueryPerformanceFrequencyImpl);
+GUEST_FUNCTION_HOOK(sub_822C3B40, GetTickCountImpl);
 
-GUEST_FUNCTION_HOOK(sub_82BD4AC8, QueryPerformanceCounterImpl);
-GUEST_FUNCTION_HOOK(sub_831CD040, QueryPerformanceFrequencyImpl);
-GUEST_FUNCTION_HOOK(sub_831CDAD0, GetTickCountImpl);
 
-GUEST_FUNCTION_HOOK(sub_82BD4BC0, GlobalMemoryStatusImpl);
+// Todo 
+
+//void GlobalMemoryStatusImpl(XLPMEMORYSTATUS lpMemoryStatus)
+//{
+//    lpMemoryStatus->dwLength = sizeof(XMEMORYSTATUS);
+//    lpMemoryStatus->dwMemoryLoad = 0;
+//    lpMemoryStatus->dwTotalPhys = 0x20000000;
+//    lpMemoryStatus->dwAvailPhys = 0x20000000;
+//    lpMemoryStatus->dwTotalPageFile = 0x20000000;
+//    lpMemoryStatus->dwAvailPageFile = 0x20000000;
+//    lpMemoryStatus->dwTotalVirtual = 0x20000000;
+//    lpMemoryStatus->dwAvailVirtual = 0x20000000;
+//}
+
+
+// TODO add those
+//GUEST_FUNCTION_HOOK(sub_831B0ED0, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831CCB98, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831CEAE0, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831CEE04, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831CF2D0, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831CF660, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831B1358, memcpy);
+//GUEST_FUNCTION_HOOK(sub_831B5E00, memmove);
+//GUEST_FUNCTION_HOOK(sub_831B0BA0, memset);
+//GUEST_FUNCTION_HOOK(sub_831CCAA0, memset);
+
+//
+//#ifdef _WIN32
+//GUEST_FUNCTION_HOOK(sub_82BD4CA8, OutputDebugStringA);
+//#else
+//GUEST_FUNCTION_STUB(sub_82BD4CA8);
+//#endif
+
+
+//GUEST_FUNCTION_HOOK(sub_82BD4AC8, QueryPerformanceCounterImpl);
+//GUEST_FUNCTION_HOOK(sub_831CD040, QueryPerformanceFrequencyImpl);
+//GUEST_FUNCTION_HOOK(sub_831CDAD0, GetTickCountImpl);
+
+// not present in TU2
+//GUEST_FUNCTION_HOOK(sub_82BD4BC0, GlobalMemoryStatusImpl);
 
 // sprintf
 //PPC_FUNC(sub_82BD4AE8)

@@ -9,6 +9,8 @@ static uint32_t g_clientCallbackParam{}; // pointer in guest memory
 static SDL_AudioDeviceID g_audioDevice{};
 static bool g_downMixToStereo;
 
+static void CreateAudioThread();
+
 static void CreateAudioDevice()
 {
     if (g_audioDevice != NULL)
@@ -54,6 +56,9 @@ void XAudioInitializeSystem()
     }
 
     CreateAudioDevice();
+
+    // create the audio thread once
+    CreateAudioThread();
 }
 
 static std::unique_ptr<std::thread> g_audioThread;
@@ -95,6 +100,31 @@ static void CreateAudioThread()
     SDL_PauseAudioDevice(g_audioDevice, 0);
     g_audioThreadShouldExit = false;
     g_audioThread = std::make_unique<std::thread>(AudioThread);
+    
+    g_audioThread->detach();
+}
+
+
+static const size_t kMaximumClientCount = 8;
+
+
+struct {
+    PPCFunc* callback;
+    uint32_t callbackParam;
+    bool in_use;
+} clients_[kMaximumClientCount];
+
+uint32_t FindFreeClient() 
+{
+    for (uint32_t i = 0; i < kMaximumClientCount; i++)
+    {
+        auto& client = clients_[i];
+        if (!client.in_use) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 void XAudioRegisterClient(PPCFunc* callback, uint32_t param)
@@ -102,10 +132,14 @@ void XAudioRegisterClient(PPCFunc* callback, uint32_t param)
     auto* pClientParam = static_cast<uint32_t*>(g_userHeap.Alloc(sizeof(param)));
     ByteSwapInplace(param);
     *pClientParam = param;
-    g_clientCallbackParam = g_memory.MapVirtual(pClientParam);
-    g_clientCallback = callback;
 
-    CreateAudioThread();
+    auto index = FindFreeClient();
+
+    clients_[index] = { callback, g_memory.MapVirtual(pClientParam), true };
+
+    //g_clientCallbackParam = g_memory.MapVirtual(pClientParam);
+    //g_clientCallback = callback;
+    
 }
 
 void XAudioSubmitFrame(void* samples)

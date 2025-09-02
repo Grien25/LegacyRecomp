@@ -263,7 +263,8 @@ int main(int argc, char *argv[])
 }
 
 
-#define _DEBUG 1
+GUEST_FUNCTION_STUB_P(sub_82601FE0); // NuiInit stuff (kinect)
+
 GUEST_FUNCTION_STUB_P(__imp__vsprintf);
 GUEST_FUNCTION_STUB_P(__imp___vsnprintf);
 GUEST_FUNCTION_STUB_P(__imp__sprintf);
