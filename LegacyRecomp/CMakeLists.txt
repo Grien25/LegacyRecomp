@@ -73,6 +73,7 @@ set(UNLEASHED_RECOMP_KERNEL_CXX_SOURCES
     "kernel/heap.cpp"
     "kernel/memory.cpp"
     "kernel/xam.cpp"
+    "kernel/xstrings.cpp"
     "kernel/io/file_system.cpp"
 )
 
@@ -177,7 +178,7 @@ set(UNLEASHED_RECOMP_CXX_SOURCES
     "sdl_listener.cpp"
     "stdafx.cpp"
     "version.cpp"
-    
+
     ${UNLEASHED_RECOMP_KERNEL_CXX_SOURCES}
     ${UNLEASHED_RECOMP_OS_CXX_SOURCES}
     ${UNLEASHED_RECOMP_CPU_CXX_SOURCES}

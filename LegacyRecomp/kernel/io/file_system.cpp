@@ -348,7 +348,6 @@ uint32_t XReadFileEx(FileHandle* hFile, void* lpBuffer, uint32_t nNumberOfBytesT
 
 uint32_t XGetFileAttributesA(const char* lpFileName)
 {
-    DebugBreak();
     std::filesystem::path filePath = FileSystem::ResolvePath(lpFileName, true);
     if (std::filesystem::is_directory(filePath))
         return FILE_ATTRIBUTE_DIRECTORY;

@@ -265,11 +265,16 @@ int main(int argc, char *argv[])
 
 GUEST_FUNCTION_STUB_P(sub_82601FE0); // NuiInit stuff (kinect)
 
+
+
+
+
+
 GUEST_FUNCTION_STUB_P(__imp__vsprintf);
 GUEST_FUNCTION_STUB_P(__imp___vsnprintf);
 GUEST_FUNCTION_STUB_P(__imp__sprintf);
 GUEST_FUNCTION_STUB_P(__imp___snprintf);
 GUEST_FUNCTION_STUB_P(__imp___snwprintf);
-GUEST_FUNCTION_STUB_P(__imp__vswprintf);
+//GUEST_FUNCTION_STUB_P(__imp__vswprintf);
 GUEST_FUNCTION_STUB_P(__imp___vscwprintf);
 GUEST_FUNCTION_STUB_P(__imp__swprintf);
