@@ -663,7 +663,7 @@ PPC_FUNC(__imp__vswprintf)
 
 
 #if _DEBUG
-    fmt::println("vswprintf({:08X}, {:08X}({}), {:08X})", buffer_ptr, format_ptr, u16_to_utf8(load_and_swap_u16Str(format)), arg_ptr);
+    LOG_UTILITY(fmt::format("vswprintf({:08X}, {:08X}({}), {:08X})", buffer_ptr, format_ptr, u16_to_utf8(load_and_swap_u16Str(format)), arg_ptr));
 #endif
 
     if (buffer_ptr == 0 || format_ptr == 0) {
@@ -684,6 +684,9 @@ PPC_FUNC(__imp__vswprintf)
     }
     else {
         //xe::copy_and_swap(buffer, (uint16_t*)data.wstr().c_str(), count);
+#if _DEBUG
+        LOG_WARNING(fmt::format("<vswprintf> final buffer: {}", u16_to_utf8(data.wstr().c_str())));
+#endif
         memcpy(buffer, data.wstr().c_str(), count * sizeof(uint16_t));
         swap_u16_str(buffer);
         buffer[count] = '\0';
