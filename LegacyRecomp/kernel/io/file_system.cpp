@@ -89,6 +89,8 @@ FileHandle* XCreateFileA
     uint32_t dwFlagsAndAttributes
 )
 {
+
+    DebugBreak();
     assert(((dwDesiredAccess & ~(GENERIC_READ | GENERIC_WRITE | FILE_READ_DATA)) == 0) && "Unknown desired access bits.");
     assert(((dwShareMode & ~(FILE_SHARE_READ | FILE_SHARE_WRITE)) == 0) && "Unknown share mode bits.");
     assert(((dwCreationDisposition & ~(CREATE_NEW | CREATE_ALWAYS)) == 0) && "Unknown creation disposition bits.");
@@ -123,6 +125,7 @@ FileHandle* XCreateFileA
 
 static uint32_t XGetFileSizeA(FileHandle* hFile, be<uint32_t>* lpFileSizeHigh)
 {
+    DebugBreak();
     std::error_code ec;
     auto fileSize = std::filesystem::file_size(hFile->path, ec);
     if (!ec)
@@ -140,6 +143,7 @@ static uint32_t XGetFileSizeA(FileHandle* hFile, be<uint32_t>* lpFileSizeHigh)
 
 uint32_t XGetFileSizeExA(FileHandle* hFile, LARGE_INTEGER* lpFileSize)
 {
+    DebugBreak();
     std::error_code ec;
     auto fileSize = std::filesystem::file_size(hFile->path, ec);
     if (!ec)
@@ -164,6 +168,7 @@ uint32_t XReadFile
     XOVERLAPPED* lpOverlapped
 )
 {
+    DebugBreak();
     uint32_t result = FALSE;
     if (lpOverlapped != nullptr)
     {
@@ -202,6 +207,7 @@ uint32_t XReadFile
 
 uint32_t XSetFilePointer(FileHandle* hFile, int32_t lDistanceToMove, be<int32_t>* lpDistanceToMoveHigh, uint32_t dwMoveMethod)
 {
+    DebugBreak();
     int32_t distanceToMoveHigh = lpDistanceToMoveHigh ? lpDistanceToMoveHigh->get() : 0;
     std::streamoff streamOffset = lDistanceToMove + (std::streamoff(distanceToMoveHigh) << 32U);
     std::fstream::seekdir streamSeekDir = {};
@@ -237,6 +243,7 @@ uint32_t XSetFilePointer(FileHandle* hFile, int32_t lDistanceToMove, be<int32_t>
 
 uint32_t XSetFilePointerEx(FileHandle* hFile, int32_t lDistanceToMove, LARGE_INTEGER* lpNewFilePointer, uint32_t dwMoveMethod)
 {
+    DebugBreak();
     std::fstream::seekdir streamSeekDir = {};
     switch (dwMoveMethod)
     {
@@ -271,6 +278,7 @@ uint32_t XSetFilePointerEx(FileHandle* hFile, int32_t lDistanceToMove, LARGE_INT
 
 FindHandle* XFindFirstFileA(const char* lpFileName, WIN32_FIND_DATAA* lpFindFileData)
 {
+    DebugBreak();
     std::string_view path = lpFileName;
     if (path.find("\\*") == (path.size() - 2) || path.find("/*") == (path.size() - 2))
     {
@@ -297,6 +305,7 @@ FindHandle* XFindFirstFileA(const char* lpFileName, WIN32_FIND_DATAA* lpFindFile
 
 uint32_t XFindNextFileA(FindHandle* Handle, WIN32_FIND_DATAA* lpFindFileData)
 {
+    DebugBreak();
     Handle->iterator++;
 
     if (Handle->iterator == Handle->searchResult.end())
@@ -312,6 +321,7 @@ uint32_t XFindNextFileA(FindHandle* Handle, WIN32_FIND_DATAA* lpFindFileData)
 
 uint32_t XReadFileEx(FileHandle* hFile, void* lpBuffer, uint32_t nNumberOfBytesToRead, XOVERLAPPED* lpOverlapped, uint32_t lpCompletionRoutine)
 {
+    DebugBreak();
     uint32_t result = FALSE;
     uint32_t numberOfBytesRead;
     std::streamoff streamOffset = lpOverlapped->Offset + (std::streamoff(lpOverlapped->OffsetHigh.get()) << 32U);
@@ -338,6 +348,7 @@ uint32_t XReadFileEx(FileHandle* hFile, void* lpBuffer, uint32_t nNumberOfBytesT
 
 uint32_t XGetFileAttributesA(const char* lpFileName)
 {
+    DebugBreak();
     std::filesystem::path filePath = FileSystem::ResolvePath(lpFileName, true);
     if (std::filesystem::is_directory(filePath))
         return FILE_ATTRIBUTE_DIRECTORY;
@@ -349,6 +360,7 @@ uint32_t XGetFileAttributesA(const char* lpFileName)
 
 uint32_t XWriteFile(FileHandle* hFile, const void* lpBuffer, uint32_t nNumberOfBytesToWrite, be<uint32_t>* lpNumberOfBytesWritten, void* lpOverlapped)
 {
+    DebugBreak();
     assert(lpOverlapped == nullptr && "Overlapped not implemented.");
 
     hFile->stream.write((const char *)(lpBuffer), nNumberOfBytesToWrite);
@@ -414,15 +426,31 @@ std::filesystem::path FileSystem::ResolvePath(const std::string_view& path, bool
     return std::u8string_view((const char8_t*)builtPath.c_str());
 }
 
-GUEST_FUNCTION_HOOK(sub_82BD4668, XCreateFileA);
-GUEST_FUNCTION_HOOK(sub_82BD4600, XGetFileSizeA);
-GUEST_FUNCTION_HOOK(sub_82BD5608, XGetFileSizeExA);
-GUEST_FUNCTION_HOOK(sub_82BD4478, XReadFile);
-GUEST_FUNCTION_HOOK(sub_831CD3E8, XSetFilePointer);
-GUEST_FUNCTION_HOOK(sub_831CE888, XSetFilePointerEx);
-GUEST_FUNCTION_HOOK(sub_831CDC58, XFindFirstFileA);
-GUEST_FUNCTION_HOOK(sub_831CDC00, XFindNextFileA);
-GUEST_FUNCTION_HOOK(sub_831CDF40, XReadFileEx);
-GUEST_FUNCTION_HOOK(sub_831CD6E8, XGetFileAttributesA);
-GUEST_FUNCTION_HOOK(sub_831CE3F8, XCreateFileA);
-GUEST_FUNCTION_HOOK(sub_82BD4860, XWriteFile);
+GUEST_FUNCTION_HOOK(sub_822C40D0, XCreateFileA);
+GUEST_FUNCTION_HOOK(sub_822C42C8, XGetFileSizeA);
+GUEST_FUNCTION_HOOK(sub_822C5418, XGetFileSizeExA);
+GUEST_FUNCTION_HOOK(sub_822C4498, XReadFile);
+GUEST_FUNCTION_HOOK(sub_826C1C00, XSetFilePointer);
+//GUEST_FUNCTION_HOOK(sub_831CE888, XSetFilePointerEx); // inlined in SetFilePointer
+GUEST_FUNCTION_HOOK(sub_822C5010, XFindFirstFileA);
+GUEST_FUNCTION_HOOK(sub_822C50A0, XFindNextFileA);
+GUEST_FUNCTION_HOOK(sub_826C2368, XReadFileEx);
+GUEST_FUNCTION_HOOK(sub_826C1FD0, XGetFileAttributesA);
+GUEST_FUNCTION_HOOK(sub_826C2518, XGetFileAttributesA); // second
+GUEST_FUNCTION_HOOK(sub_829360E8, XCreateFileA); // second 
+//GUEST_FUNCTION_HOOK(sub_82BD4860, XWriteFile); // TODO
+
+
+
+//GUEST_FUNCTION_HOOK(sub_82BD4668, XCreateFileA);
+//GUEST_FUNCTION_HOOK(sub_82BD4600, XGetFileSizeA);
+//GUEST_FUNCTION_HOOK(sub_82BD5608, XGetFileSizeExA);
+//GUEST_FUNCTION_HOOK(sub_82BD4478, XReadFile);
+//GUEST_FUNCTION_HOOK(sub_831CD3E8, XSetFilePointer);
+//GUEST_FUNCTION_HOOK(sub_831CE888, XSetFilePointerEx);
+//GUEST_FUNCTION_HOOK(sub_831CDC58, XFindFirstFileA);
+//GUEST_FUNCTION_HOOK(sub_831CDC00, XFindNextFileA);
+//GUEST_FUNCTION_HOOK(sub_831CDF40, XReadFileEx);
+//GUEST_FUNCTION_HOOK(sub_831CD6E8, XGetFileAttributesA);
+//GUEST_FUNCTION_HOOK(sub_831CE3F8, XCreateFileA);
+//GUEST_FUNCTION_HOOK(sub_82BD4860, XWriteFile);
