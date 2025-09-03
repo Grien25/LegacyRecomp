@@ -12,10 +12,112 @@
 #include "xdm.h"
 //#include <user/config.h>
 #include <os/logger.h>
+#include "kernel/xuiz.h"
 
 #ifdef _WIN32
 #include <ntstatus.h>
 #endif
+
+// HMODULE points to this struct!
+struct X_LDR_DATA_TABLE_ENTRY {
+    uint64_t in_load_order_links;            // 0x0
+    uint64_t in_memory_order_links;          // 0x8
+    uint64_t in_initialization_order_links;  // 0x10
+
+    be<uint32_t> dll_base;    // 0x18
+    be<uint32_t> image_base;  // 0x1C
+    be<uint32_t> image_size;  // 0x20
+
+    uint64_t full_dll_name;  // 0x24
+    uint64_t base_dll_name;  // 0x2C
+
+    be<uint32_t> flags;              // 0x34
+    be<uint32_t> full_image_size;    // 0x38
+    be<uint32_t> entry_point;        // 0x3C
+    be<uint16_t> load_count;         // 0x40
+    be<uint16_t> module_index;       // 0x42
+    be<uint32_t> dll_base_original;  // 0x44
+    be<uint32_t> checksum;           // 0x48 hijacked to hold kernel handle
+};
+
+struct XModule : KernelObject
+{
+    bool manualReset;
+    std::atomic<bool> signaled;
+    uint32_t handlePtr;
+
+    uint32_t getHandlePtr() const
+    {
+        return handlePtr;
+    }
+
+    void setHandlePtr(uint32_t ptr)
+    {
+        handlePtr = ptr;
+    }
+
+
+    uint32_t Wait(uint32_t timeout) override
+    {
+        if (timeout == 0)
+        {
+            if (manualReset)
+            {
+                if (!signaled)
+                    return STATUS_TIMEOUT;
+            }
+            else
+            {
+                bool expected = true;
+                if (!signaled.compare_exchange_strong(expected, false))
+                    return STATUS_TIMEOUT;
+            }
+        }
+        else if (timeout == INFINITE)
+        {
+            if (manualReset)
+            {
+                signaled.wait(false);
+            }
+            else
+            {
+                while (true)
+                {
+                    bool expected = true;
+                    if (signaled.compare_exchange_weak(expected, false))
+                        break;
+
+                    signaled.wait(expected);
+                }
+            }
+        }
+        else
+        {
+            assert(false && "Unhandled timeout value.");
+        }
+
+        return STATUS_SUCCESS;
+    }
+
+    bool Set()
+    {
+        signaled = true;
+
+        if (manualReset)
+            signaled.notify_all();
+        else
+            signaled.notify_one();
+
+        return TRUE;
+    }
+
+    bool Reset()
+    {
+        signaled = false;
+        return TRUE;
+    }
+};
+
 
 struct Event final : KernelObject, HostObject<XKEVENT>
 {
@@ -536,9 +638,33 @@ void XexGetProcedureAddress()
     LOG_UTILITY("!!! STUB !!!");
 }
 
-void XexGetModuleSection()
+uint32_t XexGetModuleSection(be<uint32_t>* handle, char* name, be<uint32_t>* data_ptr, be<uint32_t>* size_ptr)
 {
+    //printf("%d, %s\n", handle , name);
+    
+    // TODO: fix it, just an hack for now
+    auto mod = GetKernelObject<XModule>(((X_LDR_DATA_TABLE_ENTRY*)handle)->checksum);
+
+
+    uint32_t count = (global_resource_info.sizeOfHeader - 4) / 0x10;
+    if (mod)
+    {
+        for (uint32_t i = 0; i < count; i++) {
+            //auto& resource = res->resourceID[i];
+
+            Xex_ResourceInfo res = global_resource_info.resources[i];
+            if (std::string(name) == std::string(reinterpret_cast<char*>(res.resourceID)))
+            {
+                //// Found!
+                *data_ptr = res.offset;
+                *size_ptr = res.sizeOfData;
+                return STATUS_SUCCESS;
+            }
+        }
+    }
     LOG_UTILITY("!!! STUB !!!");
+
+    return -1;
 }
 
 uint32_t RtlUnicodeToMultiByteN(char* MultiByteString, uint32_t MaxBytesInMultiByteString, be<uint32_t>* BytesInMultiByteString, const be<uint16_t>* UnicodeString, uint32_t BytesInUnicodeString)
@@ -1193,9 +1319,32 @@ void XMsgStartIORequestEx()
     LOG_UTILITY("!!! STUB !!!");
 }
 
-void XexGetModuleHandle()
+
+static XModule* exeModule = nullptr;
+uint32_t XexGetModuleHandle(char* module_name, be<uint32_t>* module_ptr)
 {
-    LOG_UTILITY("!!! STUB !!!");
+    // stub, return just a dummy kernel object so that it can be referenced around
+    // idk if a full implementation is needed, but this works for now
+    if (exeModule == nullptr)
+    {
+        exeModule = CreateKernelObject<XModule>();
+        exeModule->setHandlePtr((uint32_t)g_userHeap.AllocPhysical<X_LDR_DATA_TABLE_ENTRY>());
+       ((X_LDR_DATA_TABLE_ENTRY*)g_memory.Translate(exeModule->getHandlePtr()))->checksum = GetKernelHandle(exeModule);
+    }   
+        
+
+    if (module_name == nullptr)
+    {
+        *module_ptr = exeModule->getHandlePtr();
+    }
+    else
+    {
+        return -1; 
+    }
+
+    LOG_WARNING("!!! STUB !!!, NOT COMPLETE");
+
+    return STATUS_SUCCESS;
 }
 
 bool RtlTryEnterCriticalSection(XRTL_CRITICAL_SECTION* cs)
@@ -1224,10 +1373,6 @@ void RtlInitializeCriticalSectionAndSpinCount(XRTL_CRITICAL_SECTION* cs, uint32_
     cs->OwningThread = 0;
 }
 
-void _vswprintf_x()
-{
-    LOG_UTILITY("!!! STUB !!!");
-}
 
 void _vscwprintf_x()
 {

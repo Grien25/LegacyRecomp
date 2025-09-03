@@ -11,6 +11,8 @@
 #define LOG_WARNING(str)       LOG_IMPL(Warning, __func__, str)
 #define LOG_ERROR(str)         LOG_IMPL(Error, __func__, str)
 
+#define _DEBUG 1
+
 #if _DEBUG
 #define LOG_UTILITY(str)       LOG_IMPL(Utility, __func__, str)
 #else
