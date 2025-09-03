@@ -19,6 +19,7 @@
 #include <ui/game_window.h>
 //#include <mod/mod_loader.h>
 #include <preload_executable.h>
+#include "kernel/xuiz.h"
 
 #ifdef _WIN32
 #include <timeapi.h>
@@ -39,6 +40,7 @@ const size_t XMAIOEnd = XMAIOBegin + 0x0000FFFF;
 Memory g_memory;
 Heap g_userHeap;
 XDBFWrapper g_xdbfWrapper;
+Xex2ResourceHeader global_resource_info;
 std::unordered_map<uint16_t, GuestTexture*> g_xdbfTextureCache;
 
 void HostStartup()
@@ -152,9 +154,13 @@ uint32_t LdrLoadModule(const std::filesystem::path &path)
         assert(false && "Unknown compression type.");
     }
 
-    auto res = reinterpret_cast<const Xex2ResourceInfo*>(getOptHeaderPtr(loadResult.data(), XEX_HEADER_RESOURCE_INFO));
+    auto res = (Xex2ResourceHeader*)reinterpret_cast<const Xex2ResourceHeader*>(getOptHeaderPtr(loadResult.data(), XEX_HEADER_RESOURCE_INFO));
 
-    g_xdbfWrapper = XDBFWrapper((uint8_t*)g_memory.Translate(res->offset.get()), res->sizeOfData);
+    auto resourcesCount = (res->sizeOfHeader - 4) / sizeof(Xex_ResourceInfo);
+    auto resBlockSize = resourcesCount * sizeof(Xex_ResourceInfo) + 4;
+    memcpy(&global_resource_info, res, resBlockSize);
+    //g_xdbfWrapper = XDBFWrapper((uint8_t*)g_memory.Translate(global_resource_info.resources[1].offset.get()), global_resource_info.resources[1].sizeOfData);
+
 
     return entry;
 }
@@ -254,7 +260,7 @@ int main(int argc, char *argv[])
     // Support encrypted mode, so you don't need to decrypt the xex yourself.
     // i think unleashed did that with the installer, but we yeeted their installer lol
     uint32_t entry = LdrLoadModule(modulePath);
-
+    
     Video::StartPipelinePrecompilation();
 
     GuestThread::Start({ entry, 0, 0 });
