@@ -640,24 +640,21 @@ void XexGetProcedureAddress()
 
 uint32_t XexGetModuleSection(be<uint32_t>* handle, char* name, be<uint32_t>* data_ptr, be<uint32_t>* size_ptr)
 {
-    //printf("%d, %s\n", handle , name);
-    
     // TODO: fix it, just an hack for now
+    // get executable module handle, we assume that we only have one module loaded
+    // because minecraft doesen't load modules
     auto mod = GetKernelObject<XModule>(((X_LDR_DATA_TABLE_ENTRY*)handle)->checksum);
 
-
-    uint32_t count = (global_resource_info.sizeOfHeader - 4) / 0x10;
+    uint32_t count = (global_resource_info.sizeOfHeader - 4) / sizeof(Xex_ResourceInfo);
     if (mod)
     {
         for (uint32_t i = 0; i < count; i++) {
-            //auto& resource = res->resourceID[i];
-
             Xex_ResourceInfo res = global_resource_info.resources[i];
             if (std::string(name) == std::string(reinterpret_cast<char*>(res.resourceID)))
             {
                 //// Found!
-                *data_ptr = res.offset;
-                *size_ptr = res.sizeOfData;
+                *data_ptr = res.offset.get();
+                *size_ptr = res.sizeOfData.get();
                 return STATUS_SUCCESS;
             }
         }
@@ -1339,6 +1336,8 @@ uint32_t XexGetModuleHandle(char* module_name, be<uint32_t>* module_ptr)
     }
     else
     {
+        LOG_WARNING(fmt::format("!!! STUB !!!, NOT COMPLETE -> name:{}", module_name));
+        *module_ptr = 0;
         return -1; 
     }
 

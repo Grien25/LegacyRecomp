@@ -203,8 +203,9 @@ uint32_t XamShowMessageBoxUI(uint32_t dwUserIndex, be<uint16_t>* wszTitle, be<ui
     *pResult = cButtons ? cButtons - 1 : 0;
 
 #if _DEBUG
-    assert("XamShowMessageBoxUI encountered!" && false);
-#elif _WIN32
+   // assert("XamShowMessageBoxUI encountered!" && false);
+#endif
+#if _WIN32
     // This code is Win32-only as it'll most likely crash, misbehave or
     // cause corruption due to using a different type of memory than what
     // wchar_t is on Linux. Windows uses 2 bytes while Linux uses 4 bytes.

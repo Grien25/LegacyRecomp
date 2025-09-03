@@ -4,10 +4,33 @@
 #include <os/logger.h>
 #include <config.h>
 
-static PPCFunc* g_clientCallback{};
-static uint32_t g_clientCallbackParam{}; // pointer in guest memory
+//static PPCFunc* g_clientCallback{};
+//static uint32_t g_clientCallbackParam{}; // pointer in guest memory
 static SDL_AudioDeviceID g_audioDevice{};
 static bool g_downMixToStereo;
+
+
+static const size_t kMaximumClientCount = 8;
+
+struct {
+    PPCFunc* callback;
+    uint32_t callbackParam;
+    bool in_use;
+} clients_[kMaximumClientCount];
+
+uint32_t FindFreeClient()
+{
+    for (uint32_t i = 0; i < kMaximumClientCount; i++)
+    {
+        auto& client = clients_[i];
+        if (!client.in_use) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 
 static void CreateAudioThread();
 
@@ -66,6 +89,10 @@ static volatile bool g_audioThreadShouldExit;
 
 static void AudioThread()
 {
+#if _WIN32
+    GuestThread::SetThreadName(GetCurrentThreadId(), "XAudio2 Audio Thread");
+#endif
+
     using namespace std::chrono_literals;
 
     GuestThreadContext ctx(0);
@@ -80,8 +107,16 @@ static void AudioThread()
 
         if ((queuedAudioSize / callbackAudioSize) <= MAX_LATENCY)
         {
-            ctx.ppcContext.r3.u32 = g_clientCallbackParam;
-            g_clientCallback(ctx.ppcContext, g_memory.base);
+            // TODO, this is a stub, implement it correctly.
+            //ctx.ppcContext.r3.u32 = clients_[0] g_clientCallbackParam;
+            //g_clientCallback(ctx.ppcContext, g_memory.base);
+
+            // stub, just call the first client if it exists
+            if (clients_[0].in_use)
+            {
+                ctx.ppcContext.r3.u32 = clients_[0].callbackParam;
+                clients_[0].callback(ctx.ppcContext, g_memory.base);
+            }
         }
 
         auto now = std::chrono::steady_clock::now();
@@ -100,32 +135,9 @@ static void CreateAudioThread()
     SDL_PauseAudioDevice(g_audioDevice, 0);
     g_audioThreadShouldExit = false;
     g_audioThread = std::make_unique<std::thread>(AudioThread);
-    
     g_audioThread->detach();
 }
 
-
-static const size_t kMaximumClientCount = 8;
-
-
-struct {
-    PPCFunc* callback;
-    uint32_t callbackParam;
-    bool in_use;
-} clients_[kMaximumClientCount];
-
-uint32_t FindFreeClient() 
-{
-    for (uint32_t i = 0; i < kMaximumClientCount; i++)
-    {
-        auto& client = clients_[i];
-        if (!client.in_use) {
-            return i;
-        }
-    }
-
-    return -1;
-}
 
 void XAudioRegisterClient(PPCFunc* callback, uint32_t param)
 {
