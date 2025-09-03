@@ -59,7 +59,6 @@ size_t Heap::Size(void* ptr)
 
 uint32_t RtlAllocateHeap(uint32_t heapHandle, uint32_t flags, uint32_t size)
 {
-    DebugBreak();
     void* ptr = g_userHeap.Alloc(size);
     if ((flags & 0x8) != 0)
         memset(ptr, 0, size);
@@ -70,7 +69,6 @@ uint32_t RtlAllocateHeap(uint32_t heapHandle, uint32_t flags, uint32_t size)
 
 uint32_t RtlReAllocateHeap(uint32_t heapHandle, uint32_t flags, uint32_t memoryPointer, uint32_t size)
 {
-    DebugBreak();
     printf("RtlReAllocateHeap: %08X %08X %08X %08X\n", heapHandle, flags, memoryPointer, size);
 
     void* ptr = g_userHeap.Alloc(size);
@@ -90,7 +88,6 @@ uint32_t RtlReAllocateHeap(uint32_t heapHandle, uint32_t flags, uint32_t memoryP
 
 uint32_t RtlFreeHeap(uint32_t heapHandle, uint32_t flags, uint32_t memoryPointer)
 {
-    DebugBreak();
     if (memoryPointer != NULL)
         g_userHeap.Free(g_memory.Translate(memoryPointer));
 
@@ -99,7 +96,6 @@ uint32_t RtlFreeHeap(uint32_t heapHandle, uint32_t flags, uint32_t memoryPointer
 
 uint32_t RtlSizeHeap(uint32_t heapHandle, uint32_t flags, uint32_t memoryPointer)
 {
-    DebugBreak();
     if (memoryPointer != NULL)
         return (uint32_t)g_userHeap.Size(g_memory.Translate(memoryPointer));
 
@@ -108,7 +104,6 @@ uint32_t RtlSizeHeap(uint32_t heapHandle, uint32_t flags, uint32_t memoryPointer
 
 uint32_t XAllocMem(uint32_t size, uint32_t flags)
 {
-    DebugBreak();
     void* ptr = (flags & 0x80000000) != 0 ?
         g_userHeap.AllocPhysical(size, (1ull << ((flags >> 24) & 0xF))) :
         g_userHeap.Alloc(size);
@@ -120,29 +115,35 @@ uint32_t XAllocMem(uint32_t size, uint32_t flags)
     return g_memory.MapVirtual(ptr);
 }
 
+
 void XFreeMem(uint32_t baseAddress, uint32_t flags)
 {
-    DebugBreak();
     if (baseAddress != NULL)
         g_userHeap.Free(g_memory.Translate(baseAddress));
 }
 
-//GUEST_FUNCTION_STUB(sub_82BD7788); // HeapCreate
-//GUEST_FUNCTION_STUB(sub_82BD9250); // HeapDestroy // TU2 unused !?
-
 GUEST_FUNCTION_STUB(sub_822CABE0); // HeapCreate
+GUEST_FUNCTION_STUB(sub_822C8B30); // HeapDestroy
 
 GUEST_FUNCTION_HOOK(sub_822CB1B0, RtlAllocateHeap);
 GUEST_FUNCTION_HOOK(sub_822CC490, RtlFreeHeap);
 GUEST_FUNCTION_HOOK(sub_822CCA58, RtlReAllocateHeap);
 GUEST_FUNCTION_HOOK(sub_822CA308, RtlSizeHeap);
 
+// it *should* work correctly without hooking those, since their guest
+// implementation uses RtlAllocateHeap and MmAllocatePhysicalMemoryEx, which are already
+// implemented *correctly*
+//GUEST_FUNCTION_HOOK(sub_822C4330, XAllocMem);
+//GUEST_FUNCTION_HOOK(sub_822C4468, XFreeMem);
+
+
+
+// sonic unleashed 
+//GUEST_FUNCTION_STUB(sub_82BD7788); // HeapCreate
+//GUEST_FUNCTION_STUB(sub_82BD9250); // HeapDestroy 
 //GUEST_FUNCTION_HOOK(sub_82BD7D30, RtlAllocateHeap); 
 //GUEST_FUNCTION_HOOK(sub_82BD8600, RtlFreeHeap);  
 //GUEST_FUNCTION_HOOK(sub_82BD88F0, RtlReAllocateHeap); 
 //GUEST_FUNCTION_HOOK(sub_82BD6FD0, RtlSizeHeap);
-
-
-// TU2 unused !?
 //GUEST_FUNCTION_HOOK(sub_831CC9C8, XAllocMem);
 //GUEST_FUNCTION_HOOK(sub_831CCA60, XFreeMem);
