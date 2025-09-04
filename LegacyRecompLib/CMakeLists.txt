@@ -1,4 +1,4 @@
-project("LegacyRecompLib")
+project("FrameworkRecompLib")
 
 add_compile_options(
     -fno-strict-aliasing
@@ -10,8 +10,8 @@ else()
     add_compile_options(-ffp-model=strict)
 endif()
 
-target_compile_definitions(XenonRecomp PRIVATE 
-    XENON_RECOMP_CONFIG_FILE_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/config/LCE.toml\"
+target_compile_definitions(XenonRecomp PRIVATE
+    XENON_RECOMP_CONFIG_FILE_PATH=\"${CMAKE_CURRENT_SOURCE_DIR}/config/Game.toml\"
     XENON_RECOMP_HEADER_FILE_PATH=\"${UNLEASHED_RECOMP_TOOLS_ROOT}/XenonRecomp/XenonUtils/ppc_context.h\")
 
 set(UNLEASHED_RECOMP_PPC_RECOMPILED_SOURCES 
@@ -27,15 +27,15 @@ foreach(i RANGE 0 179)
 endforeach()
 
 add_custom_command(
-    OUTPUT 
+    OUTPUT
         #"${CMAKE_CURRENT_SOURCE_DIR}/private/default_patched.xex"
         ${UNLEASHED_RECOMP_PPC_RECOMPILED_SOURCES}
-    COMMAND 
+    COMMAND
         $<TARGET_FILE:XenonRecomp>
-    DEPENDS 
+    DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/private/tu2.xex"
         #"${CMAKE_CURRENT_SOURCE_DIR}/private/default.xexp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/config/LCE.toml"
+        "${CMAKE_CURRENT_SOURCE_DIR}/config/Game.toml"
 )
 
 #add_custom_command(
@@ -73,12 +73,12 @@ add_custom_command(
 #        ${XENOS_RECOMP_INCLUDE}
 #)
 
-add_library(LegacyRecompLib 
+add_library(FrameworkRecompLib
     ${UNLEASHED_RECOMP_PPC_RECOMPILED_SOURCES}
 #    "shader/shader_cache.h"
 #    "shader/shader_cache.cpp"
 )
  
-target_include_directories(LegacyRecompLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(LegacyRecompLib PRIVATE "${UNLEASHED_RECOMP_TOOLS_ROOT}/XenonRecomp/thirdparty/simde")
-target_precompile_headers(LegacyRecompLib PUBLIC "ppc/ppc_recomp_shared.h")
+target_include_directories(FrameworkRecompLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(FrameworkRecompLib PRIVATE "${UNLEASHED_RECOMP_TOOLS_ROOT}/XenonRecomp/thirdparty/simde")
+target_precompile_headers(FrameworkRecompLib PUBLIC "ppc/ppc_recomp_shared.h")

@@ -1,6 +1,6 @@
 # GUEST_FUNCTION Documentation
 
-This document catalogs all GUEST_FUNCTION implementations across the Legacy Recomp codebase, explaining their purpose and functionality.
+This document catalogs all GUEST_FUNCTION implementations across the Framework Recomp codebase, explaining their purpose and functionality.
 
 ## Overview
 

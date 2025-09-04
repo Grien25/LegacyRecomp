@@ -1,5 +1,5 @@
-# Legacy Recomp
-A static recompilation of Minecraft: Xbox 360 Edition
+# Framework Recomp
+A static recompilation Runtime framework for others to use
 
 WIP README
 

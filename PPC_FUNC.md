@@ -1,6 +1,6 @@
 # PPC_FUNC Documentation
 
-This document catalogs all PPC_FUNC implementations across the Legacy Recomp codebase, explaining their purpose and functionality.
+This document catalogs all PPC_FUNC implementations across the Framework Recomp codebase, explaining their purpose and functionality.
 
 ## Overview
 
@@ -427,4 +427,4 @@ PPC_FUNC(sub_82E328D8)
 4. **Performance Optimization**: Minimized overhead in hot rendering paths
 5. **Debug Support**: Extensive debugging and profiling capabilities
 
-This comprehensive hooking system allows Legacy Recomp to intercept and modify any Xbox 360 function call, enabling full compatibility and performance optimization on modern hardware.
+This comprehensive hooking system allows Framework Recomp to intercept and modify any Xbox 360 function call, enabling full compatibility and performance optimization on modern hardware.
